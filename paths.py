@@ -1,9 +1,11 @@
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).parent
 
-# Dados (gitignored — ver .gitignore)
-DATA         = ROOT / 'data'
+# SOMEIP_DATA_DIR permite redirecionar os dados para outro volume (ex: Google Drive no Colab).
+# Se não definida, usa detection/data/ como padrão local.
+DATA         = Path(os.environ['SOMEIP_DATA_DIR']) if 'SOMEIP_DATA_DIR' in os.environ else ROOT / 'data'
 PCAPS_DIR    = DATA / 'raw'            # PCAPs baixados por src/00_download.py
 PARSED_CSV   = DATA / 'parsed' / 'parsed_packets.csv'   # gerado por src/01_parse.py
 FEATURES_DIR = DATA / 'features'       # gerado por src/03_features.py
