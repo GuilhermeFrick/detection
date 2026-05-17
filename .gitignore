@@ -1,0 +1,24 @@
+# Dados pesados (baixados ou gerados localmente)
+data/raw/
+data/parsed/
+data/features/
+data/kim/
+
+# Artefatos Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Ambientes
+.venv/
+env/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
