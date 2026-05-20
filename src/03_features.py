@@ -20,7 +20,7 @@ from collections import defaultdict, deque
 from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from paths import PARSED_CSV, FEATURES_DIR
+from paths import PARSED_DIR, FEATURES_DIR
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location('byte_model', Path(__file__).parent / '02_byte_model.py')
 _mod  = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_mod)
@@ -32,6 +32,14 @@ FEATURES_DIR.mkdir(exist_ok=True)
 CHUNK      = 500_000
 N_SAMPLES  = 50_000
 RAND_STATE = 42
+
+
+def iter_parsed_chunks(usecols=None):
+    """Itera em ordem sobre todos os CSVs em PARSED_DIR, chunk por chunk."""
+    for csv_path in sorted(PARSED_DIR.glob('*.csv')):
+        for chunk in pd.read_csv(csv_path, usecols=usecols,
+                                 chunksize=CHUNK, low_memory=False):
+            yield chunk
 
 # ── Colunas de feature (ordem fixa → índice no array numpy) ──────────────────
 FEAT_COLS = [
@@ -66,7 +74,7 @@ def train_byte_models():
     n_si = n_sd = n_tu = 0
 
     print('Coletando amostras para modelos de bytes...')
-    for chunk in pd.read_csv(PARSED_CSV, usecols=cols, chunksize=CHUNK, low_memory=False):
+    for chunk in iter_parsed_chunks(usecols=cols):
         b_benign = chunk[(chunk['label'] == 0) & (chunk['attack_type'] == 'normal')]
         b_all    = chunk[chunk['label'] == 0]
 
@@ -121,7 +129,7 @@ def make_flow_state():
     }
 
 
-def _f01_f08_f12(i, key, ts, ip_l, tl_l, si_h, tu_h, sd, state):
+def _f01_f08_f12(key, ts, ip_l, tl_l, si_h, tu_h, sd, state):
     """f01 (time interval) e f08-f12 (payload/length changes) para pacote i."""
     f01 = abs(ts - state['prev_ts'][key]) if state['prev_ts'][key] is not None else 0.0
     f08 = hamming_distance(state['prev_si_pld'][key], si_h) if not sd else 0.0
@@ -228,7 +236,7 @@ def extract(df, flow_state, model_si, model_sd, model_tu):
         src  = src_ip[i]
 
         f01[i], f08[i], f09[i], f10[i], f11[i], f12[i] = _f01_f08_f12(
-            i, key, ts, ip_l, tl_l, si_h, tu_h, sd, flow_state)
+            key, ts, ip_l, tl_l, si_h, tu_h, sd, flow_state)
         f13[i] = _f13_repeat_rate(key, si_h, flow_state['recent_payloads'])
         f14[i] = _f14_duplicate_source(src, si_h, flow_state['last_src_payload'])
         f17[i] = _f17_src_rate(src, ts, flow_state['src_timestamps'])
@@ -266,10 +274,14 @@ def extract(df, flow_state, model_si, model_sd, model_tu):
 # ── 3. Execução principal ─────────────────────────────────────────────────────
 
 if __name__ == '__main__':
-    print(f'CSV: {PARSED_CSV}')
-    print(f'Existe: {PARSED_CSV.exists()}')
-    if PARSED_CSV.exists():
-        print(f'Tamanho: {PARSED_CSV.stat().st_size/1e9:.2f} GB')
+    csvs = sorted(PARSED_DIR.glob('*.csv'))
+    if not csvs:
+        print(f'[ERRO] Nenhum CSV encontrado em {PARSED_DIR}')
+        print('       Execute src/01_parse.py primeiro.')
+        sys.exit(1)
+    print(f'CSVs em {PARSED_DIR}:')
+    for p in csvs:
+        print(f'  {p.name}  ({p.stat().st_size/1e9:.2f} GB)')
 
     model_si, model_sd, model_tu = train_byte_models()
 
@@ -279,7 +291,7 @@ if __name__ == '__main__':
     else:
         flow_state = make_flow_state()
         first = True; n_total = 0; t0 = time.time()
-        for chunk in pd.read_csv(PARSED_CSV, chunksize=CHUNK, low_memory=False):
+        for chunk in iter_parsed_chunks():
             out = extract(chunk, flow_state, model_si, model_sd, model_tu)
             out.to_csv(RAW_CSV, mode='a', header=first, index=False)
             first = False; n_total += len(out)
