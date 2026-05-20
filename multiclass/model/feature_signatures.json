@@ -1,0 +1,604 @@
+{
+  "normalized": {
+    "f01_ip_time_interval": {
+      "Benigno": {
+        "mean": 0.0,
+        "std": 0.0049
+      },
+      "DoS": {
+        "mean": 0.0,
+        "std": 0.0001
+      },
+      "Fuzzy": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "MITM_Multi": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "MITM_Single": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "FakeClientID": {
+        "mean": 0.0151,
+        "std": 0.122
+      }
+    },
+    "f08_someip_payload_change": {
+      "Benigno": {
+        "mean": 0.0058,
+        "std": 0.0394
+      },
+      "DoS": {
+        "mean": 0.0073,
+        "std": 0.0197
+      },
+      "Fuzzy": {
+        "mean": 0.0931,
+        "std": 0.2101
+      },
+      "MITM_Multi": {
+        "mean": 0.0006,
+        "std": 0.0082
+      },
+      "MITM_Single": {
+        "mean": 0.0249,
+        "std": 0.0576
+      },
+      "FakeClientID": {
+        "mean": 0.4114,
+        "std": 0.1762
+      }
+    },
+    "f11_ip_length_change": {
+      "Benigno": {
+        "mean": 0.0,
+        "std": 0.0004
+      },
+      "DoS": {
+        "mean": 0.0006,
+        "std": 0.0022
+      },
+      "Fuzzy": {
+        "mean": 0.0028,
+        "std": 0.052
+      },
+      "MITM_Multi": {
+        "mean": 0.0001,
+        "std": 0.001
+      },
+      "MITM_Single": {
+        "mean": 0.0001,
+        "std": 0.0014
+      },
+      "FakeClientID": {
+        "mean": 0.0056,
+        "std": 0.0041
+      }
+    },
+    "f12_tcpudp_length_change": {
+      "Benigno": {
+        "mean": 0.0,
+        "std": 0.0004
+      },
+      "DoS": {
+        "mean": 0.0006,
+        "std": 0.0022
+      },
+      "Fuzzy": {
+        "mean": 0.0028,
+        "std": 0.052
+      },
+      "MITM_Multi": {
+        "mean": 0.0001,
+        "std": 0.001
+      },
+      "MITM_Single": {
+        "mean": 0.0001,
+        "std": 0.0014
+      },
+      "FakeClientID": {
+        "mean": 0.0056,
+        "std": 0.0041
+      }
+    },
+    "f13_payload_repeat_rate": {
+      "Benigno": {
+        "mean": 0.4588,
+        "std": 0.4941
+      },
+      "DoS": {
+        "mean": 0.6957,
+        "std": 0.4021
+      },
+      "Fuzzy": {
+        "mean": 0.6829,
+        "std": 0.4356
+      },
+      "MITM_Multi": {
+        "mean": 0.3905,
+        "std": 0.4855
+      },
+      "MITM_Single": {
+        "mean": 0.7338,
+        "std": 0.3383
+      },
+      "FakeClientID": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "f15_someip_payload_len": {
+      "Benigno": {
+        "mean": 0.0089,
+        "std": 0.0098
+      },
+      "DoS": {
+        "mean": 0.0209,
+        "std": 0.0126
+      },
+      "Fuzzy": {
+        "mean": 0.0247,
+        "std": 0.0869
+      },
+      "MITM_Multi": {
+        "mean": 0.0074,
+        "std": 0.0092
+      },
+      "MITM_Single": {
+        "mean": 0.0278,
+        "std": 0.0094
+      },
+      "FakeClientID": {
+        "mean": 0.0079,
+        "std": 0.0045
+      }
+    },
+    "f16_tcpudp_len": {
+      "Benigno": {
+        "mean": 0.0267,
+        "std": 0.0152
+      },
+      "DoS": {
+        "mean": 0.0326,
+        "std": 0.0107
+      },
+      "Fuzzy": {
+        "mean": 0.0479,
+        "std": 0.0849
+      },
+      "MITM_Multi": {
+        "mean": 0.0238,
+        "std": 0.0145
+      },
+      "MITM_Single": {
+        "mean": 0.0362,
+        "std": 0.0086
+      },
+      "FakeClientID": {
+        "mean": 0.0078,
+        "std": 0.0045
+      }
+    },
+    "f17_src_packet_rate": {
+      "Benigno": {
+        "mean": 0.0373,
+        "std": 0.0181
+      },
+      "DoS": {
+        "mean": 0.0354,
+        "std": 0.0017
+      },
+      "Fuzzy": {
+        "mean": 0.0556,
+        "std": 0.0181
+      },
+      "MITM_Multi": {
+        "mean": 0.0265,
+        "std": 0.0071
+      },
+      "MITM_Single": {
+        "mean": 0.0448,
+        "std": 0.0101
+      },
+      "FakeClientID": {
+        "mean": 0.0004,
+        "std": 0.0002
+      }
+    },
+    "f18_src_payload_diversity": {
+      "Benigno": {
+        "mean": 0.0731,
+        "std": 0.1326
+      },
+      "DoS": {
+        "mean": 0.0072,
+        "std": 0.005
+      },
+      "Fuzzy": {
+        "mean": 0.1778,
+        "std": 0.0879
+      },
+      "MITM_Multi": {
+        "mean": 0.015,
+        "std": 0.0209
+      },
+      "MITM_Single": {
+        "mean": 0.0673,
+        "std": 0.1112
+      },
+      "FakeClientID": {
+        "mean": 0.9697,
+        "std": 0.0458
+      }
+    },
+    "f19_is_sd": {
+      "Benigno": {
+        "mean": 0.0085,
+        "std": 0.0917
+      },
+      "DoS": {
+        "mean": 0.5955,
+        "std": 0.4908
+      },
+      "Fuzzy": {
+        "mean": 0.0223,
+        "std": 0.1477
+      },
+      "MITM_Multi": {
+        "mean": 0.0193,
+        "std": 0.1375
+      },
+      "MITM_Single": {
+        "mean": 0.8516,
+        "std": 0.3555
+      },
+      "FakeClientID": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "f20_src_service_diversity": {
+      "Benigno": {
+        "mean": 0.1819,
+        "std": 0.3536
+      },
+      "DoS": {
+        "mean": 0.3324,
+        "std": 0.0178
+      },
+      "Fuzzy": {
+        "mean": 0.0722,
+        "std": 0.1373
+      },
+      "MITM_Multi": {
+        "mean": 0.2629,
+        "std": 0.1361
+      },
+      "MITM_Single": {
+        "mean": 0.1646,
+        "std": 0.1667
+      },
+      "FakeClientID": {
+        "mean": 0.658,
+        "std": 0.0573
+      }
+    },
+    "f21_is_relay_service": {
+      "Benigno": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "DoS": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "Fuzzy": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "MITM_Multi": {
+        "mean": 0.3816,
+        "std": 0.4858
+      },
+      "MITM_Single": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "FakeClientID": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "f22_src_clientid_diversity": {
+      "Benigno": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "DoS": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "Fuzzy": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "MITM_Multi": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "MITM_Single": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "FakeClientID": {
+        "mean": 0.9935,
+        "std": 0.0684
+      }
+    }
+  },
+  "real": {
+    "f01_ip_time_interval": {
+      "Benigno": {
+        "mean": 20.9471
+      },
+      "DoS": {
+        "mean": 25.8182
+      },
+      "Fuzzy": {
+        "mean": 0.4949
+      },
+      "MITM_Multi": {
+        "mean": 0.1043
+      },
+      "MITM_Single": {
+        "mean": 0.0664
+      },
+      "FakeClientID": {
+        "mean": 13354.5205
+      }
+    },
+    "f08_someip_payload_change": {
+      "Benigno": {
+        "mean": 0.0051
+      },
+      "DoS": {
+        "mean": 0.0064
+      },
+      "Fuzzy": {
+        "mean": 0.0814
+      },
+      "MITM_Multi": {
+        "mean": 0.0005
+      },
+      "MITM_Single": {
+        "mean": 0.0218
+      },
+      "FakeClientID": {
+        "mean": 0.3599
+      }
+    },
+    "f11_ip_length_change": {
+      "Benigno": {
+        "mean": 0.0182
+      },
+      "DoS": {
+        "mean": 0.6887
+      },
+      "Fuzzy": {
+        "mean": 3.4762
+      },
+      "MITM_Multi": {
+        "mean": 0.1132
+      },
+      "MITM_Single": {
+        "mean": 0.1087
+      },
+      "FakeClientID": {
+        "mean": 6.8942
+      }
+    },
+    "f12_tcpudp_length_change": {
+      "Benigno": {
+        "mean": 0.0182
+      },
+      "DoS": {
+        "mean": 0.6887
+      },
+      "Fuzzy": {
+        "mean": 3.4762
+      },
+      "MITM_Multi": {
+        "mean": 0.1132
+      },
+      "MITM_Single": {
+        "mean": 0.1087
+      },
+      "FakeClientID": {
+        "mean": 6.8942
+      }
+    },
+    "f13_payload_repeat_rate": {
+      "Benigno": {
+        "mean": 0.4588
+      },
+      "DoS": {
+        "mean": 0.6957
+      },
+      "Fuzzy": {
+        "mean": 0.6829
+      },
+      "MITM_Multi": {
+        "mean": 0.3905
+      },
+      "MITM_Single": {
+        "mean": 0.7338
+      },
+      "FakeClientID": {
+        "mean": 0.0
+      }
+    },
+    "f15_someip_payload_len": {
+      "Benigno": {
+        "mean": 11.9209
+      },
+      "DoS": {
+        "mean": 27.8328
+      },
+      "Fuzzy": {
+        "mean": 32.8922
+      },
+      "MITM_Multi": {
+        "mean": 9.8784
+      },
+      "MITM_Single": {
+        "mean": 37.0372
+      },
+      "FakeClientID": {
+        "mean": 10.5184
+      }
+    },
+    "f16_tcpudp_len": {
+      "Benigno": {
+        "mean": 51.7304
+      },
+      "DoS": {
+        "mean": 59.7126
+      },
+      "Fuzzy": {
+        "mean": 80.1917
+      },
+      "MITM_Multi": {
+        "mean": 47.8622
+      },
+      "MITM_Single": {
+        "mean": 64.5687
+      },
+      "FakeClientID": {
+        "mean": 26.5184
+      }
+    },
+    "f17_src_packet_rate": {
+      "Benigno": {
+        "mean": 216.4192
+      },
+      "DoS": {
+        "mean": 205.8085
+      },
+      "Fuzzy": {
+        "mean": 322.7662
+      },
+      "MITM_Multi": {
+        "mean": 153.9447
+      },
+      "MITM_Single": {
+        "mean": 260.2568
+      },
+      "FakeClientID": {
+        "mean": 2.1648
+      }
+    },
+    "f18_src_payload_diversity": {
+      "Benigno": {
+        "mean": 0.0731
+      },
+      "DoS": {
+        "mean": 0.0072
+      },
+      "Fuzzy": {
+        "mean": 0.1778
+      },
+      "MITM_Multi": {
+        "mean": 0.015
+      },
+      "MITM_Single": {
+        "mean": 0.0673
+      },
+      "FakeClientID": {
+        "mean": 0.9697
+      }
+    },
+    "f19_is_sd": {
+      "Benigno": {
+        "mean": 0.0085
+      },
+      "DoS": {
+        "mean": 0.5955
+      },
+      "Fuzzy": {
+        "mean": 0.0223
+      },
+      "MITM_Multi": {
+        "mean": 0.0193
+      },
+      "MITM_Single": {
+        "mean": 0.8516
+      },
+      "FakeClientID": {
+        "mean": 0.0
+      }
+    },
+    "f20_src_service_diversity": {
+      "Benigno": {
+        "mean": 1.5457
+      },
+      "DoS": {
+        "mean": 1.9971
+      },
+      "Fuzzy": {
+        "mean": 1.2165
+      },
+      "MITM_Multi": {
+        "mean": 1.7887
+      },
+      "MITM_Single": {
+        "mean": 1.4939
+      },
+      "FakeClientID": {
+        "mean": 2.9741
+      }
+    },
+    "f21_is_relay_service": {
+      "Benigno": {
+        "mean": 0.0
+      },
+      "DoS": {
+        "mean": 0.0
+      },
+      "Fuzzy": {
+        "mean": 0.0
+      },
+      "MITM_Multi": {
+        "mean": 0.3816
+      },
+      "MITM_Single": {
+        "mean": 0.0
+      },
+      "FakeClientID": {
+        "mean": 0.0
+      }
+    },
+    "f22_src_clientid_diversity": {
+      "Benigno": {
+        "mean": 1.0
+      },
+      "DoS": {
+        "mean": 1.0
+      },
+      "Fuzzy": {
+        "mean": 1.0
+      },
+      "MITM_Multi": {
+        "mean": 1.0
+      },
+      "MITM_Single": {
+        "mean": 1.0
+      },
+      "FakeClientID": {
+        "mean": 7.9546
+      }
+    }
+  }
+}

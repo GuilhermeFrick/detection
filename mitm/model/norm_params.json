@@ -1,0 +1,50 @@
+{
+  "f01_ip_time_interval": {
+    "min": 0.0,
+    "max": 1272.2654168605804
+  },
+  "f08_someip_payload_change": {
+    "min": 0.0,
+    "max": 0.6796875
+  },
+  "f11_ip_length_change": {
+    "min": 0.0,
+    "max": 72.0
+  },
+  "f12_tcpudp_length_change": {
+    "min": 0.0,
+    "max": 72.0
+  },
+  "f13_payload_repeat_rate": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "f15_someip_payload_len": {
+    "min": 0.0,
+    "max": 128.0
+  },
+  "f16_tcpudp_len": {
+    "min": 20.0,
+    "max": 152.0
+  },
+  "f17_src_packet_rate": {
+    "min": 0.0,
+    "max": 5809.285318559557
+  },
+  "f18_src_payload_diversity": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "f19_is_sd": {
+    "min": 0.0,
+    "max": 1.0
+  },
+  "f20_src_service_diversity": {
+    "min": 1.0,
+    "max": 4.0
+  },
+  "f21_is_relay_service": {
+    "min": 0.0,
+    "max": 1.0
+  }
+}

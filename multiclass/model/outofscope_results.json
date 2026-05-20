@@ -1,0 +1,79 @@
+[
+  {
+    "attack": "Error on Error",
+    "pcap": "eerror.pcap",
+    "total": 90871,
+    "Benigno": 90856,
+    "DoS": 2,
+    "Fuzzy": 10,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 3
+  },
+  {
+    "attack": "Error on Event",
+    "pcap": "eevent.pcap",
+    "total": 1638,
+    "Benigno": 1637,
+    "DoS": 0,
+    "Fuzzy": 0,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 1
+  },
+  {
+    "attack": "Delete Request",
+    "pcap": "drequest.pcap",
+    "total": 2228,
+    "Benigno": 2226,
+    "DoS": 0,
+    "Fuzzy": 0,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 2
+  },
+  {
+    "attack": "Delete Response",
+    "pcap": "dresponse.pcap",
+    "total": 2423,
+    "Benigno": 2420,
+    "DoS": 0,
+    "Fuzzy": 0,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 3
+  },
+  {
+    "attack": "Wrong Interface",
+    "pcap": "wrongInterface.pcap",
+    "total": 2183,
+    "Benigno": 1447,
+    "DoS": 0,
+    "Fuzzy": 1,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 735
+  },
+  {
+    "attack": "Wrong Interface 2",
+    "pcap": "wrongInterface2.pcap",
+    "total": 1615,
+    "Benigno": 1463,
+    "DoS": 0,
+    "Fuzzy": 0,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 152
+  },
+  {
+    "attack": "Delete Request Test",
+    "pcap": "deleteRequest_test1.pcap",
+    "total": 1363,
+    "Benigno": 1362,
+    "DoS": 0,
+    "Fuzzy": 0,
+    "MITM_Multi": 0,
+    "MITM_Single": 0,
+    "FakeClientID": 1
+  }
+]
