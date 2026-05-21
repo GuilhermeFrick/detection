@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apresentação 3 — Evolução da Pesquisa · SOME/IP IDS</title>
+<style>
+  :root {
+    --blue-dark:  #1a3a6b;
+    --blue-mid:   #2563a8;
+    --blue-light: #4a8fd4;
+    --blue-pale:  #dceeff;
+    --blue-bg:    #f0f6ff;
+    --white:      #ffffff;
+    --gray-1:     #f7f9fc;
+    --gray-2:     #e8edf5;
+    --gray-3:     #c5cfdf;
+    --gray-4:     #7b8aaa;
+    --gray-5:     #3d4a66;
+    --text:       #1a2540;
+    --green:      #1a7a4a;
+    --green-bg:   #e6f5ec;
+    --red:        #b52020;
+    --red-bg:     #fdeaea;
+    --orange:     #b05a00;
+    --orange-bg:  #fff3e0;
+    --purple:     #5a2fa0;
+    --purple-bg:  #f0ebff;
+    --font:       'Segoe UI', system-ui, sans-serif;
+    --mono:       'Cascadia Code', 'Fira Code', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #e0e8f8; font-family: var(--font); }
+
+  /* ── Slide container ── */
+  #deck { width: 100%; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background: var(--white);
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s ease;
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* ── Header stripe ── */
+  .slide-header {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    color: var(--white); padding: .7rem 2.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    flex-shrink: 0;
+  }
+  .slide-header .title { font-size: 1.05rem; font-weight: 700; flex: 1; }
+  .slide-header .tag  { font-size: 11px; background: rgba(255,255,255,.15);
+                        border-radius: 20px; padding: .2rem .7rem; font-weight: 600;
+                        letter-spacing: .04em; }
+  .slide-num { font-size: 12px; opacity: .6; white-space: nowrap; }
+
+  /* ── Slide body ── */
+  .slide-body { flex: 1; overflow-y: auto; padding: 1.4rem 2.5rem 1rem; }
+
+  /* ── Cover slide ── */
+  .slide.cover {
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 55%, var(--blue-light) 100%);
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .cover-inner { color: var(--white); max-width: 700px; padding: 2rem; }
+  .cover-inner .pres-num { font-size: 13px; opacity: .7; text-transform: uppercase;
+                           letter-spacing: .12em; margin-bottom: 1.2rem; }
+  .cover-inner h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.25; margin-bottom: .8rem; }
+  .cover-inner .sub { font-size: 1.1rem; opacity: .85; margin-bottom: 2rem; }
+  .cover-tags { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+  .cover-tags .ct { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+                    border-radius: 20px; padding: .25rem .8rem; font-size: 12px; font-weight: 600; }
+
+  /* ── Two-column layout ── */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .col-wide { grid-template-columns: 1.3fr 1fr; }
+
+  /* ── Section headings ── */
+  h2 { font-size: 1.3rem; font-weight: 700; color: var(--blue-dark);
+       margin-bottom: 1rem; padding-bottom: .4rem;
+       border-bottom: 2px solid var(--blue-pale); }
+  h3 { font-size: .95rem; font-weight: 700; color: var(--blue-mid); margin-bottom: .5rem; }
+  p  { font-size: .88rem; color: var(--gray-5); line-height: 1.6; margin-bottom: .5rem; }
+
+  /* ── Card ── */
+  .card { background: var(--gray-1); border: 1px solid var(--gray-2);
+          border-radius: 10px; padding: 1rem 1.1rem; }
+  .card-blue { background: var(--blue-bg); border-color: var(--blue-pale); }
+
+  /* ── Pill tags ── */
+  .pill { display: inline-block; border-radius: 20px; padding: .15rem .6rem;
+          font-size: 11px; font-weight: 700; }
+  .pill-green  { background: var(--green-bg);  color: var(--green); }
+  .pill-red    { background: var(--red-bg);    color: var(--red); }
+  .pill-orange { background: var(--orange-bg); color: var(--orange); }
+  .pill-blue   { background: var(--blue-pale); color: var(--blue-dark); }
+  .pill-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* ── Callout boxes ── */
+  .callout { border-radius: 0 8px 8px 0; padding: .6rem .9rem;
+             font-size: .84rem; margin-bottom: .6rem; line-height: 1.5; }
+  .callout-blue   { background: var(--blue-bg);   border-left: 3px solid var(--blue-mid); }
+  .callout-green  { background: var(--green-bg);  border-left: 3px solid var(--green); }
+  .callout-red    { background: var(--red-bg);    border-left: 3px solid var(--red); }
+  .callout-orange { background: var(--orange-bg); border-left: 3px solid var(--orange); }
+  .callout strong { color: var(--text); }
+
+  /* ── Term definition strip ── */
+  .term-box { display:flex; flex-direction:column; gap:.35rem; margin-bottom:.7rem; }
+  .term-def { display:block; background:var(--blue-bg);
+              border-left:3px solid var(--blue-mid); border-radius:0 8px 8px 0;
+              padding:.45rem .85rem; font-size:.8rem; line-height:1.6; }
+  .term-def .term-label { font-weight:800; color:var(--blue-dark); margin-right:.2rem; }
+
+  /* ── Attack description box ── */
+  .atk-desc { background: var(--gray-1); border: 1px solid var(--gray-2);
+              border-radius: 10px; padding: .85rem 1rem; margin-top: .5rem; }
+  .atk-desc h4 { font-size: .8rem; font-weight: 700; color: var(--blue-dark);
+                 text-transform: uppercase; letter-spacing: .06em;
+                 margin-bottom: .45rem; }
+  .atk-desc p  { font-size: .82rem; color: var(--gray-5); line-height: 1.65;
+                 margin-bottom: .35rem; }
+  .atk-desc p:last-child { margin-bottom: 0; }
+  .atk-desc .hi { color: var(--blue-dark); font-weight: 600; }
+  .atk-desc .hi-red { color: var(--red); font-weight: 600; }
+
+  /* ── Metrics ── */
+  .metric-row { display: flex; gap: .7rem; flex-wrap: wrap; margin-bottom: .8rem; }
+  .metric { background: var(--gray-1); border: 1px solid var(--gray-2);
+            border-radius: 8px; padding: .5rem .9rem; flex: 1; min-width: 90px; text-align: center; }
+  .metric .val { font-size: 1.4rem; font-weight: 800; font-family: var(--mono); color: var(--blue-dark); }
+  .metric .lbl { font-size: 10px; color: var(--gray-4); text-transform: uppercase; letter-spacing: .05em; }
+  .val-good { color: var(--green) !important; }
+  .val-warn { color: var(--orange) !important; }
+
+  /* ── Feature bars ── */
+  .feat { margin-bottom: .5rem; }
+  .feat-top { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 2px; }
+  .feat-top .name { color: var(--text); font-family: var(--mono); font-weight: 600; }
+  .feat-top .pct  { color: var(--gray-4); font-weight: 700; }
+  .feat-bg { background: var(--gray-2); border-radius: 4px; height: 7px; overflow: hidden; }
+  .feat-bar { height: 100%; border-radius: 4px; }
+  .feat-desc { font-size: 10px; color: var(--gray-4); margin-top: 2px; line-height: 1.3; }
+  .b-blue   { background: var(--blue-mid); }
+  .b-green  { background: var(--green); }
+  .b-orange { background: #e07b00; }
+  .b-purple { background: var(--purple); }
+
+  /* ── Confusion matrix ── */
+  table.cm { border-collapse: collapse; font-size: 12px; }
+  table.cm th { color: var(--gray-4); font-size: 10px; padding: .3rem .6rem; }
+  table.cm td { padding: .4rem .7rem; text-align: center; border-radius: 5px; font-weight: 700; font-family: var(--mono); }
+  .cm-tn { background: var(--green-bg);  color: var(--green); }
+  .cm-tp { background: var(--green-bg);  color: var(--green); }
+  .cm-fp { background: var(--red-bg);    color: var(--red); }
+  .cm-fn { background: var(--red-bg);    color: var(--red); }
+
+  /* ── Tables ── */
+  table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.t th { background: var(--blue-dark); color: var(--white); padding: .45rem .7rem;
+               text-align: left; font-size: 11px; letter-spacing: .04em; }
+  table.t th:first-child { border-radius: 6px 0 0 0; }
+  table.t th:last-child  { border-radius: 0 6px 0 0; }
+  table.t td { padding: .4rem .7rem; border-bottom: 1px solid var(--gray-2); color: var(--text); }
+  table.t tr:last-child td { border-bottom: none; }
+  table.t tr:nth-child(even) td { background: var(--gray-1); }
+  code { font-family: var(--mono); font-size: 11px; background: var(--blue-pale);
+         color: var(--blue-dark); padding: .1rem .35rem; border-radius: 3px; }
+
+  /* ── Flow steps ── */
+  .flow { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin: .6rem 0; }
+  .flow-box { background: var(--white); border: 2px solid var(--blue-mid); border-radius: 8px;
+              padding: .3rem .8rem; font-size: 12px; font-weight: 700; color: var(--blue-dark); }
+  .flow-box.done { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+  .flow-box.next { border-color: var(--orange); color: var(--orange); background: var(--orange-bg); }
+  .flow-arrow { color: var(--gray-3); font-size: 16px; font-weight: 700; }
+
+  /* ── Navigation ── */
+  #nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+         display: flex; align-items: center; justify-content: space-between;
+         background: rgba(26,58,107,.95); padding: .5rem 1.5rem;
+         backdrop-filter: blur(8px); }
+  #nav button { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+                color: var(--white); border-radius: 6px; padding: .35rem 1rem;
+                cursor: pointer; font-size: 13px; font-weight: 600; transition: background .15s; }
+  #nav button:hover:not(:disabled) { background: rgba(255,255,255,.25); }
+  #nav button:disabled { opacity: .35; cursor: default; }
+  #progress-wrap { flex: 1; margin: 0 1.5rem; height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; }
+  #progress-bar  { height: 100%; background: var(--blue-light); border-radius: 2px; transition: width .3s ease; }
+  #slide-counter { color: rgba(255,255,255,.7); font-size: 12px; white-space: nowrap; }
+
+  /* ── Diagram wrapper ── */
+  .diag { background: var(--blue-bg); border: 1px solid var(--blue-pale); border-radius: 10px;
+          padding: .8rem; overflow: hidden; }
+  .diag svg { display: block; max-width: 100%; height: auto; }
+
+  ul.pts { padding-left: 1.2rem; }
+  ul.pts li { font-size: .87rem; color: var(--gray-5); line-height: 1.7; }
+  ul.pts li strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 1 — CAPA
+═══════════════════════════════════════════════════════ -->
+<div class="slide cover active" id="s1">
+  <div class="cover-inner">
+    <div class="pres-num">Apresentação 3 · Evolução da Pesquisa</div>
+    <h1>Detecção de Intrusão em Redes Veiculares SOME/IP</h1>
+    <div class="sub">Pipeline XGBoost baseado em features comportamentais por janelas deslizantes</div>
+    <div class="cover-tags">
+      <span class="ct">Kim et al. 2026</span>
+      <span class="ct">Alkhatib et al. 2021</span>
+      <span class="ct">SOME/IP · Automotive Ethernet</span>
+      <span class="ct">XGBoost · Scapy</span>
+      <span class="ct">9 ECUs simuladas</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 2 — PROTOCOLO SOME/IP
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="slide-header">
+    <div class="title">O Protocolo SOME/IP</div>
+    <div class="tag">Contexto técnico</div>
+    <div class="slide-num">2 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols col-wide">
+      <div>
+        <h2>Scalable service-Oriented MiddlewarE over IP</h2>
+        <p>Padrão AUTOSAR para comunicação entre ECUs em redes de automóveis via Ethernet. Segue arquitetura <strong>publish-subscribe</strong>: servidores publicam eventos; ECUs subscritoras recebem automaticamente quando um evento ocorre.</p>
+
+        <h3 style="margin-top:.9rem;">Transporte: UDP vs TCP</h3>
+        <table class="t" style="margin-top:.4rem; margin-bottom:.8rem;">
+          <tr><th scope="col">Protocolo</th><th scope="col">Uso típico</th><th scope="col">Características</th></tr>
+          <tr><td><strong>UDP</strong></td><td>Event notifications, SD, maioria das mensagens</td><td>Sem conexão, baixa latência, sem garantia de entrega</td></tr>
+          <tr><td><strong>TCP</strong></td><td>Mensagens grandes, transferência confiável</td><td>Com conexão, retransmissão garantida, maior overhead</td></tr>
+        </table>
+
+        <h3>Header SOME/IP (16 bytes fixos)</h3>
+        <table class="t" style="margin-top:.4rem;">
+          <tr><th scope="col">Campo</th><th scope="col">Tamanho</th><th scope="col">Relevância para IDS</th></tr>
+          <tr><td><code>service_id</code></td><td>2 bytes</td><td>Identifica o serviço — <strong>chave no labeling</strong></td></tr>
+          <tr><td><code>method_id</code></td><td>2 bytes</td><td>Método/evento — distingue tipo de ação</td></tr>
+          <tr><td><code>msg_type</code></td><td>1 byte</td><td>REQUEST (0x00), RESPONSE (0x80), <strong>NOTIFICATION (0x02)</strong></td></tr>
+          <tr><td><code>client_id</code></td><td>2 bytes</td><td>Deve ser único por cliente — explorado no FakeClientID</td></tr>
+          <tr><td><code>length</code></td><td>4 bytes</td><td>Tamanho do payload — feature f15</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="diag">
+          <svg width="340" height="320" viewBox="0 0 340 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="a1" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#2563a8"/>
+              </marker>
+              <marker id="a2" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+            </defs>
+
+            <!-- Service Discovery -->
+            <rect x="10" y="10" width="320" height="35" rx="6" fill="#dceeff" stroke="#4a8fd4" stroke-width="1.5"/>
+            <text x="170" y="24" text-anchor="middle" fill="#1a3a6b" font-size="11" font-weight="700">SOME/IP-SD (Service Discovery)</text>
+            <text x="170" y="38" text-anchor="middle" fill="#2563a8" font-size="9">UDP porta 30490 · service_id=0xFFFF · OfferService / FindService / Subscribe</text>
+
+            <!-- Server -->
+            <rect x="30" y="75" width="100" height="50" rx="8" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="2"/>
+            <text x="80" y="97" text-anchor="middle" fill="#1a7a4a" font-size="11" font-weight="700">Servidor</text>
+            <text x="80" y="112" text-anchor="middle" fill="#3d4a66" font-size="9">publica eventos</text>
+            <text x="80" y="123" text-anchor="middle" fill="#3d4a66" font-size="8">svc=0x1001 (ADAS)</text>
+
+            <!-- SD subscribe arrow -->
+            <line x1="80" y1="45" x2="80" y2="75" stroke="#4a8fd4" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#a1)"/>
+
+            <!-- Subscriber A -->
+            <rect x="200" y="75" width="100" height="50" rx="8" fill="#dceeff" stroke="#2563a8" stroke-width="1.5"/>
+            <text x="250" y="97" text-anchor="middle" fill="#1a3a6b" font-size="11" font-weight="700">ECU A</text>
+            <text x="250" y="112" text-anchor="middle" fill="#3d4a66" font-size="9">subscritora</text>
+
+            <rect x="200" y="160" width="100" height="50" rx="8" fill="#dceeff" stroke="#2563a8" stroke-width="1.5"/>
+            <text x="250" y="182" text-anchor="middle" fill="#1a3a6b" font-size="11" font-weight="700">ECU B</text>
+            <text x="250" y="197" text-anchor="middle" fill="#3d4a66" font-size="9">subscritora</text>
+
+            <!-- Event notification arrows -->
+            <line x1="130" y1="95" x2="200" y2="95" stroke="#1a7a4a" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="130" y1="105" x2="200" y2="185" stroke="#1a7a4a" stroke-width="1.5" marker-end="url(#a2)"/>
+            <text x="165" y="88" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">NOTIFICATION</text>
+            <text x="165" y="100" text-anchor="middle" fill="#3d4a66" font-size="8">msg_type=0x02</text>
+
+            <!-- Legend -->
+            <rect x="10" y="240" width="320" height="70" rx="6" fill="#f7f9fc" stroke="#e8edf5"/>
+            <text x="20" y="256" fill="#1a3a6b" font-size="10" font-weight="700">Fluxo típico:</text>
+            <text x="20" y="272" fill="#3d4a66" font-size="9">1. ECU B envia FindService (SD) para descobrir o servidor</text>
+            <text x="20" y="285" fill="#3d4a66" font-size="9">2. Servidor responde OfferService (SD)</text>
+            <text x="20" y="298" fill="#3d4a66" font-size="9">3. ECU B envia SubscribeEventgroup</text>
+            <text x="20" y="311" fill="#3d4a66" font-size="9">4. Servidor envia NOTIFICATIONs conforme eventos ocorrem</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 3 — O QUE CARACTERIZA UM ATAQUE
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="slide-header">
+    <div class="title">O que caracteriza um ataque?</div>
+    <div class="tag">Modelo de ameaça</div>
+    <div class="slide-num">3 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="callout callout-blue" style="margin-bottom:1rem;">
+      <strong>Premissa:</strong> o atacante obteve acesso físico ou lógico à rede interna do veículo (porta OBD-II, ECU comprometida, dispositivo plugado). Ele <em>não possui</em> material criptográfico nem acesso ao firmware das ECUs legítimas.
+    </div>
+
+    <table class="t" style="margin-bottom:1rem;">
+      <tr>
+        <th scope="col">Ataque</th>
+        <th scope="col">O que faz</th>
+        <th scope="col">Objetivo</th>
+        <th scope="col">Assinatura comportamental</th>
+        <th scope="col">Furtividade</th>
+      </tr>
+      <tr>
+        <td><span class="pill pill-red">DoS</span></td>
+        <td>Envia 3.000 NOTIFICATIONs ADAS no menor tempo possível</td>
+        <td>Saturar rede e CPU das ECUs receptoras</td>
+        <td>Volume altíssimo + <strong>mesmo payload repetido</strong></td>
+        <td>Baixa</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-orange">Fuzzy</span></td>
+        <td>Envia offers de serviços SD com IDs aleatórios + NOTIFICATIONs ADAS com payload randômico</td>
+        <td>Sobrecarregar tabela SD + descobrir vulnerabilidades</td>
+        <td>Volume alto + <strong>payload diferente a cada pacote</strong></td>
+        <td>Baixa</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-purple">MITM Multi</span></td>
+        <td>Relay de eventos ADAS via serviço próprio (svc=0x100B); SD spoofing com IP forjado</td>
+        <td>Substituir dados ADAS legítimos por forjados</td>
+        <td><strong>Serviço relay inexistente (0x100B)</strong> + SD withdraw forjado</td>
+        <td>Média</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-purple">MITM Single</span></td>
+        <td>SD withdraw para desconectar assinantes; injeta NOTIFICATIONs forjadas</td>
+        <td>Impersonar servidor ADAS</td>
+        <td><strong>SD withdraw anômalo</strong> contínuo de um único IP</td>
+        <td>Média</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue">FakeClientID</span></td>
+        <td>Rotaciona múltiplos client_ids falsos em REQUESTs</td>
+        <td>Impersonar clientes legítimos / escalada de privilégio</td>
+        <td><strong>Diversidade de client_ids</strong> por IP (anomalia de sessão)</td>
+        <td>Alta</td>
+      </tr>
+    </table>
+
+    <div class="cols">
+      <div class="callout callout-green">
+        <strong>Tráfego benigno:</strong> payloads com variação moderada, taxa de pacotes estável, service_ids conhecidos, client_id único por sessão, sem SD withdraws contínuos.
+      </div>
+      <div class="callout callout-orange">
+        <strong>Diferencial DoS vs Fuzzy:</strong> ambos geram volume alto, mas DoS repete o mesmo payload (diversidade ≈ 0) enquanto Fuzzy aleatoriza cada pacote (diversidade ≈ 1). Sinais opostos permitem distingui-los.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 4 — ATRIBUIÇÃO DE LABEL (LABELING)
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="slide-header">
+    <div class="title">Atribuição de Label — Kim vs Alkhatib</div>
+    <div class="tag">Ground truth · como se decide o que é ataque</div>
+    <div class="slide-num">4 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="callout callout-blue" style="margin-bottom:.8rem;">
+      Em Machine Learning, <strong>atribuição de label</strong> (ou <em>labeling</em>) é o processo de associar a cada amostra de treino a resposta correta — neste caso, indicar se um pacote é benigno (0) ou ataque (1). A qualidade do label determina diretamente o que o modelo aprende.
+    </div>
+
+    <div class="cols">
+      <div class="card card-blue">
+        <h3>Dataset Kim et al. 2026 — Atribuição por conteúdo SOME/IP</h3>
+        <p style="margin-bottom:.5rem;">Kim fornece PCAPs com metadados de simulação (IPs dos atacantes, parâmetros do ataque). A atribuição de label é feita <strong>por conteúdo dos campos SOME/IP</strong>, não pelo IP de origem — seguindo a especificação dos autores.</p>
+        <p style="margin-bottom:.6rem;">O critério é baseado em conteúdo porque o endereço IP não é suficiente: o nó atacante também gera tráfego legítimo durante a captura (subscriptions SD, respostas normais) — usar o IP rotularia esses pacotes como ataque incorretamente. Além disso, no MITM Multi, o atacante forja o IP de origem (172.18.0.10 — o servidor legítimo), tornando o IP inútil como identificador.</p>
+        <table class="t" style="font-size:11px;">
+          <tr><th scope="col">Ataque</th><th scope="col">Critério de atribuição</th></tr>
+          <tr><td>DoS</td><td><code>src=.11 + svc=0x1001 + meth=0x0001 + msg=NOTIF</code></td></tr>
+          <tr><td>Fuzzy</td><td><code>(is_sd + msg=NOTIF) OR (svc=0x1001 + meth=0x0001)</code></td></tr>
+          <tr><td>MITM Multi</td><td><code>svc=0x100B</code> ou <code>SD Stop Offer com IP forjado</code></td></tr>
+          <tr><td>MITM Single</td><td><code>is_sd + msg=NOTIF</code> ou <code>svc=0x1001 + meth=0x0001</code></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Dataset Alkhatib et al. 2021 — Labels pré-definidos em CSV</h3>
+        <p style="margin-bottom:.5rem;">Alkhatib fornece PCAPs <em>e</em> arquivos CSV com o label de cada pacote já atribuído pelos autores. A atribuição foi feita durante a geração da simulação: cada pacote gerado pelo atacante foi marcado como ataque no momento da captura.</p>
+        <p style="margin-bottom:.5rem;"><strong>FakeClientID:</strong> o atacante gera REQUESTs com client_ids diferentes em sequência. O label=1 é atribuído a cada REQUEST com client_id não pertencente à sessão legítima.</p>
+        <table class="t" style="font-size:11px; margin-bottom:.6rem;">
+          <tr><th scope="col">Arquivo</th><th scope="col">Label CSV</th><th scope="col">Uso</th></tr>
+          <tr><td>fakeClientID.pcap</td><td>fakeclientid1.csv</td><td>Treino (label=5)</td></tr>
+          <tr><td>fakeClientID2.pcap</td><td>fakeclientid2.csv</td><td>Treino (label=5)</td></tr>
+          <tr><td>eerror, eevent, drequest…</td><td>—</td><td>Teste out-of-scope</td></tr>
+        </table>
+        <div class="callout callout-green" style="font-size:.81rem;">
+          <strong>Diferença fundamental:</strong> Kim exige que calculemos os labels a partir da spec do protocolo. Alkhatib entrega os labels prontos. Em ambos os casos, o modelo aprende <em>o que os autores definiram como ataque</em>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 5 — FLUXO DE TREINO E VALIDAÇÃO
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="slide-header">
+    <div class="title">Fluxo de Treino e Validação</div>
+    <div class="tag">Pipeline completo</div>
+    <div class="slide-num">5 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="diag" style="margin-bottom:1rem;">
+      <svg width="780" height="170" viewBox="0 0 780 170" xmlns="http://www.w3.org/2000/svg" style="max-width:100%; height:auto;">
+        <defs>
+          <marker id="ap" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#2563a8"/>
+          </marker>
+        </defs>
+
+        <!-- Step boxes -->
+        <!-- 1 PCAP raw -->
+        <rect x="10" y="55" width="100" height="60" rx="8" fill="#dceeff" stroke="#4a8fd4" stroke-width="1.5"/>
+        <text x="60" y="79" text-anchor="middle" fill="#1a3a6b" font-size="10" font-weight="700">PCAPs brutos</text>
+        <text x="60" y="93" text-anchor="middle" fill="#3d4a66" font-size="9">Kim: 7 arquivos</text>
+        <text x="60" y="106" text-anchor="middle" fill="#3d4a66" font-size="9">Alkhatib: 9 arquivos</text>
+        <line x1="110" y1="85" x2="140" y2="85" stroke="#2563a8" stroke-width="1.5" marker-end="url(#ap)"/>
+
+        <!-- 2 Parse -->
+        <rect x="140" y="45" width="110" height="80" rx="8" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="195" y="69" text-anchor="middle" fill="#1a7a4a" font-size="10" font-weight="700">01_parse.py</text>
+        <text x="195" y="84" text-anchor="middle" fill="#3d4a66" font-size="9">Scapy: extrai campos</text>
+        <text x="195" y="97" text-anchor="middle" fill="#3d4a66" font-size="9">IP / UDP / SOME/IP</text>
+        <text x="195" y="110" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">Atribuição de label</text>
+        <line x1="250" y1="85" x2="280" y2="85" stroke="#2563a8" stroke-width="1.5" marker-end="url(#ap)"/>
+
+        <!-- 3 Feature extraction -->
+        <rect x="280" y="45" width="120" height="80" rx="8" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="340" y="69" text-anchor="middle" fill="#1a7a4a" font-size="10" font-weight="700">01_features.py</text>
+        <text x="340" y="84" text-anchor="middle" fill="#3d4a66" font-size="9">9–13 features por pacote</text>
+        <text x="340" y="97" text-anchor="middle" fill="#3d4a66" font-size="9">janelas deslizantes</text>
+        <text x="340" y="110" text-anchor="middle" fill="#3d4a66" font-size="9">normalização min-max</text>
+        <line x1="400" y1="85" x2="430" y2="85" stroke="#2563a8" stroke-width="1.5" marker-end="url(#ap)"/>
+
+        <!-- 4 Split -->
+        <rect x="430" y="55" width="90" height="60" rx="8" fill="#f0ebff" stroke="#5a2fa0" stroke-width="1.5"/>
+        <text x="475" y="79" text-anchor="middle" fill="#5a2fa0" font-size="10" font-weight="700">Split</text>
+        <text x="475" y="93" text-anchor="middle" fill="#3d4a66" font-size="9">50% treino</text>
+        <text x="475" y="106" text-anchor="middle" fill="#3d4a66" font-size="9">50% teste</text>
+        <line x1="520" y1="85" x2="550" y2="85" stroke="#2563a8" stroke-width="1.5" marker-end="url(#ap)"/>
+
+        <!-- 5 XGBoost -->
+        <rect x="550" y="45" width="100" height="80" rx="8" fill="#dceeff" stroke="#2563a8" stroke-width="2"/>
+        <text x="600" y="69" text-anchor="middle" fill="#1a3a6b" font-size="10" font-weight="700">02_train.py</text>
+        <text x="600" y="84" text-anchor="middle" fill="#3d4a66" font-size="9">XGBoost classifier</text>
+        <text x="600" y="97" text-anchor="middle" fill="#3d4a66" font-size="9">n_est=100 · depth=6</text>
+        <text x="600" y="110" text-anchor="middle" fill="#3d4a66" font-size="9">tree_method=hist</text>
+        <line x1="650" y1="85" x2="680" y2="85" stroke="#2563a8" stroke-width="1.5" marker-end="url(#ap)"/>
+
+        <!-- 6 Avaliação -->
+        <rect x="680" y="55" width="90" height="60" rx="8" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="1.5"/>
+        <text x="725" y="79" text-anchor="middle" fill="#1a7a4a" font-size="10" font-weight="700">Avaliação</text>
+        <text x="725" y="93" text-anchor="middle" fill="#3d4a66" font-size="9">F1, AUC-ROC</text>
+        <text x="725" y="106" text-anchor="middle" fill="#3d4a66" font-size="9">Conf. Matrix</text>
+
+        <!-- Rótulos -->
+        <text x="60" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">Dados brutos</text>
+        <text x="195" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">CSV por PCAP</text>
+        <text x="340" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">features.csv · npy</text>
+        <text x="475" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">estratificado</text>
+        <text x="600" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">sem data leakage</text>
+        <text x="725" y="145" text-anchor="middle" fill="#3d4a66" font-size="9">no conjunto teste</text>
+      </svg>
+    </div>
+
+    <div class="card" style="margin-bottom:.6rem;">
+      <h3>Estratégia: binário por classe → multiclasse</h3>
+      <p style="margin-bottom:.5rem;">Cada tipo de ataque é estudado isoladamente primeiro — permite entender a assinatura comportamental individual e validar os labels antes de combinar.</p>
+      <div class="flow">
+        <div class="flow-box done">DoS</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box done">Fuzzy</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box done">MITM ×2</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box next">6 classes</div>
+      </div>
+    </div>
+
+    <div style="margin-top:.5rem;">
+      <div style="display:flex; align-items:baseline; gap:1rem; margin-bottom:.5rem; border-bottom:2px solid var(--blue-pale); padding-bottom:.3rem;">
+        <h3 style="color:var(--blue-dark); font-size:.9rem; flex:1;">Catálogo completo — 21 features comportamentais (sem bytes brutos)</h3>
+        <span style="font-size:.75rem; color:var(--gray-4);">
+          <span style="background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .4rem; font-size:.72rem;">Kim full</span> pipeline Kim original &nbsp;
+          <span style="background:#e6f5ec; border:1px solid #1a7a4a; border-radius:4px; padding:.1rem .4rem; font-size:.72rem;">+ proposta</span> extensão desta pesquisa
+        </span>
+      </div>
+      <table class="t" style="font-size:.76rem;">
+        <tr>
+          <th scope="col" style="width:4%">ID</th>
+          <th scope="col" style="width:22%">Nome</th>
+          <th scope="col" style="width:44%">O que mede</th>
+          <th scope="col" style="width:18%">Relevância nos ataques</th>
+          <th scope="col" style="width:12%">Usado em</th>
+        </tr>
+
+        <!-- Grupo: Temporal -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">TEMPORAL / FLUXO</td>
+        </tr>
+        <tr>
+          <td><strong>f01</strong></td>
+          <td>ip_time_interval</td>
+          <td>Intervalo de tempo entre pacotes consecutivos do mesmo fluxo (5-tupla src/dst IP+porta+protocolo)</td>
+          <td>Complementar em todos</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+
+        <!-- Grupo: Modelos de bytes -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">MODELOS DE DISTRIBUIÇÃO DE BYTES — treinados no tráfego benigno</td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f02</strong></td>
+          <td>someip_likelihood</td>
+          <td>Log-verossimilhança do payload SOME/IP frente ao modelo de bytes benigno — quão "normal" é cada byte?</td>
+          <td>Assinatura estatística de payload atípico</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f03</strong></td>
+          <td>someipsd_likelihood</td>
+          <td>Log-verossimilhança do payload SOME/IP-SD frente ao modelo benigno de mensagens Service Discovery</td>
+          <td>Detecta SD com conteúdo incomum</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f04</strong></td>
+          <td>tcpudp_likelihood</td>
+          <td>Log-verossimilhança do payload de transporte (TCP/UDP) frente ao modelo benigno</td>
+          <td>Assinatura estatística de transporte atípico</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f05</strong></td>
+          <td>someip_entropy</td>
+          <td>Entropia cruzada do payload SOME/IP vs modelo benigno — mede surpresa por byte em média</td>
+          <td>Complementa f02 (par likelihood+entropy)</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f06</strong></td>
+          <td>someipsd_entropy</td>
+          <td>Entropia cruzada do payload SD vs modelo benigno de Service Discovery</td>
+          <td>Complementa f03</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f07</strong></td>
+          <td>tcpudp_entropy</td>
+          <td>Entropia cruzada do payload de transporte vs modelo benigno</td>
+          <td>Complementa f04</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+
+        <!-- Grupo: Hamming -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">VARIAÇÃO DE PAYLOAD (DISTÂNCIA DE HAMMING)</td>
+        </tr>
+        <tr>
+          <td><strong>f08</strong></td>
+          <td>someip_payload_change</td>
+          <td>Distância de Hamming normalizada entre payloads SOME/IP consecutivos (pacotes não-SD): 0 = idêntico, 1 = totalmente diferente</td>
+          <td><span class="pill pill-orange">Fuzzy</span> dominante (51,3%) · <span class="pill pill-red">DoS</span> ≈ 0</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f09</strong></td>
+          <td>someipsd_payload_change</td>
+          <td>Distância de Hamming normalizada entre payloads SD consecutivos (pacotes com svc=0xFFFF)</td>
+          <td>Variação em mensagens de descoberta</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f10</strong></td>
+          <td>tcpudp_payload_change</td>
+          <td>Distância de Hamming normalizada entre payloads do segmento TCP/UDP consecutivos</td>
+          <td>Variação na camada de transporte</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+
+        <!-- Grupo: Comprimento -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">VARIAÇÃO E TAMANHO DE COMPRIMENTO</td>
+        </tr>
+        <tr>
+          <td><strong>f11</strong></td>
+          <td>ip_length_change</td>
+          <td>Variação absoluta do comprimento do pacote IP entre transmissões consecutivas do mesmo fluxo</td>
+          <td>Complementar em todos</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr>
+          <td><strong>f12</strong></td>
+          <td>tcpudp_length_change</td>
+          <td>Variação absoluta do comprimento do segmento TCP/UDP entre transmissões consecutivas</td>
+          <td>Complementar em todos</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr>
+          <td><strong>f15</strong></td>
+          <td>someip_payload_len</td>
+          <td>Tamanho em bytes do payload SOME/IP (após os 8 bytes de cabeçalho fixo do protocolo)</td>
+          <td><span class="pill pill-red">DoS</span> (58,7%) · <span class="pill pill-purple">MITM Multi</span> (28,7%)</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr>
+          <td><strong>f16</strong></td>
+          <td>tcpudp_len</td>
+          <td>Comprimento total do segmento de transporte (TCP ou UDP), incluindo cabeçalho + payload</td>
+          <td>Complementar em todos</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+
+        <!-- Grupo: Repetição -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">REPETIÇÃO E DIVERSIDADE DE PAYLOAD</td>
+        </tr>
+        <tr>
+          <td><strong>f13</strong></td>
+          <td>payload_repeat_rate</td>
+          <td>Fração dos últimos 5 payloads do mesmo fluxo idênticos ao payload atual (janela deslizante)</td>
+          <td><span class="pill pill-red">DoS</span> — payload repetido → rate ≈ 1,0</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr style="color:var(--gray-4);">
+          <td><strong>f14</strong></td>
+          <td>duplicate_source</td>
+          <td>Flag: 1 se o mesmo payload SOME/IP já foi observado vindo de um src_ip diferente (relay cross-PCAP)</td>
+          <td>Detecta relay MITM multi-origem</td>
+          <td><span style="font-size:.72rem; background:#f0f6ff; border:1px solid #4a8fd4; border-radius:4px; padding:.1rem .35rem;">Kim full</span></td>
+        </tr>
+
+        <!-- Grupo: Comportamento por IP -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">COMPORTAMENTO POR IP — janela deslizante de 1.000 pacotes <span style="background:#e6f5ec; border:1px solid #1a7a4a; border-radius:4px; padding:.1rem .4rem; margin-left:.4rem;">+ proposta</span></td>
+        </tr>
+        <tr>
+          <td><strong>f17</strong></td>
+          <td>src_packet_rate</td>
+          <td>Taxa de pacotes por segundo do src_ip, calculada sobre os últimos 1.000 timestamps do mesmo IP</td>
+          <td><span class="pill pill-red">DoS</span> e <span class="pill pill-orange">Fuzzy</span> — flood intenso</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+        <tr>
+          <td><strong>f18</strong></td>
+          <td>src_payload_diversity</td>
+          <td>Proporção de payloads únicos entre os últimos 1.000 pacotes do src_ip (0 = todos iguais, 1 = todos únicos)</td>
+          <td><span class="pill pill-red">DoS</span> ≈ 0 · <span class="pill pill-orange">Fuzzy</span> ≈ 1</td>
+          <td><span class="pill pill-green">todos</span></td>
+        </tr>
+
+        <!-- Grupo: Flags SOME/IP -->
+        <tr style="background:#f0f6ff;">
+          <td colspan="5" style="font-size:.72rem; font-weight:700; color:var(--blue-mid); padding:.25rem .5rem; letter-spacing:.05em;">FLAGS SOME/IP ESPECÍFICAS <span style="background:#e6f5ec; border:1px solid #1a7a4a; border-radius:4px; padding:.1rem .4rem; margin-left:.4rem;">+ proposta</span></td>
+        </tr>
+        <tr>
+          <td><strong>f19</strong></td>
+          <td>is_sd</td>
+          <td>Flag booleana: 1 se o pacote usa service_id = 0xFFFF — porta exclusiva do SOME/IP Service Discovery</td>
+          <td><span class="pill pill-purple">MITM Single</span> dominante (92,9%)</td>
+          <td><span class="pill pill-orange">Fuzzy+</span></td>
+        </tr>
+        <tr>
+          <td><strong>f20</strong></td>
+          <td>src_service_diversity</td>
+          <td>Número de service_ids distintos usados pelo src_ip na janela de 1.000 pacotes — mede se o IP usa muitos ou poucos serviços</td>
+          <td><span class="pill pill-purple">MITM</span> — relay usa service_id fixo</td>
+          <td><span class="pill pill-purple">MITM</span></td>
+        </tr>
+        <tr>
+          <td><strong>f21</strong></td>
+          <td>is_relay_service</td>
+          <td>Flag booleana: 1 se service_id = 0x100B — serviço proxy criado exclusivamente pelo atacante no cenário MITM Multi</td>
+          <td><span class="pill pill-purple">MITM Multi</span> dominante (69,7%)</td>
+          <td><span class="pill pill-purple">MITM</span></td>
+        </tr>
+      </table>
+      <p style="font-size:.75rem; color:var(--gray-4); margin-top:.4rem;">
+        <em>Cinza = feature presente no pipeline Kim completo (03_features.py) mas não treinada nos classificadores binários individuais — requer ByteDistributionModel separado.</em>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 6 — DATASET E BALANÇO
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="slide-header">
+    <div class="title">Dataset — Composição e Balanço de Classes</div>
+    <div class="tag">Kim 2026 · Alkhatib 2021</div>
+    <div class="slide-num">6 / 14</div>
+  </div>
+  <div class="slide-body">
+    <table class="t" style="margin-bottom:1rem;">
+      <tr>
+        <th scope="col">PCAP</th>
+        <th scope="col">Tipo</th>
+        <th scope="col">Atacante</th>
+        <th scope="col">Total parsado</th>
+        <th scope="col">Benigno</th>
+        <th scope="col">Ataque (content-label)</th>
+        <th scope="col">Proporção</th>
+      </tr>
+      <tr><td>benign_traffic</td><td><span class="pill pill-green">Normal</span></td><td>—</td><td>2.193.802</td><td>2.193.802</td><td>0</td><td>—</td></tr>
+      <tr><td>dos_noti_flood</td><td><span class="pill pill-red">DoS</span></td><td>.11</td><td>1.864.530</td><td>1.794.483 (96,2%)</td><td><strong>69.393</strong> (3,7%)</td><td>57:1</td></tr>
+      <tr><td>fuzzy_1</td><td><span class="pill pill-orange">Fuzzy</span></td><td>.17</td><td>1.705.267</td><td>1.701.445 (99,8%)</td><td>3.822 (0,2%)</td><td>445:1</td></tr>
+      <tr><td>fuzzy_2</td><td><span class="pill pill-orange">Fuzzy</span></td><td>.12</td><td>1.304.154</td><td>1.268.249 (97,2%)</td><td>35.905 (2,8%)</td><td>35:1</td></tr>
+      <tr><td>fuzzy_3</td><td><span class="pill pill-orange">Fuzzy</span></td><td>.12</td><td>2.223.650</td><td>2.073.159 (93,2%)</td><td>150.491 (6,8%)</td><td>14:1</td></tr>
+      <tr><td>mitm_multi</td><td><span class="pill pill-purple">MITM</span></td><td>.14/.15</td><td>2.412.529</td><td>2.081.624 (86,3%)</td><td>330.905 (13,7%)</td><td>6:1</td></tr>
+      <tr><td>mitm_single</td><td><span class="pill pill-purple">MITM</span></td><td>.13</td><td>2.037.576</td><td>1.678.203 (82,4%)</td><td>359.373 (17,6%)</td><td>5:1</td></tr>
+    </table>
+
+    <div class="cols">
+      <div class="callout callout-orange">
+        <strong>Dataset desbalanceado:</strong> em todos os PCAPs, pacotes benignos superam os de ataque. O DoS tem a maior proporção (57:1), enquanto o MITM Single é o mais balanceado (5:1). O desbalanceamento reflete a realidade: ataques são eventos raros em capturas de tráfego veicular.
+      </div>
+      <div class="callout callout-blue">
+        <strong>Combinação para treino binário:</strong> cada classificador usa <code>benign_traffic.csv</code> + o(s) PCAP(s) do ataque correspondente. O split 50/50 estratificado garante que a proporção de classes é mantida em treino e teste.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 7 — DoS
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="slide-header">
+    <div class="title">Classificador DoS — Event Notification Flooding</div>
+    <div class="tag">Binário · 9 features</div>
+    <div class="slide-num">7 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="term-box">
+      <div class="term-def"><span class="term-label">Flooding:</span> inundação deliberada de mensagens — o atacante envia um volume anormalmente alto de pacotes em curto intervalo, saturando buffers e CPU das ECUs receptoras. O objetivo é degradar ou impedir o processamento de mensagens legítimas (<em>Denial of Service</em>).</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="diag" style="margin-bottom:.8rem;">
+          <svg width="360" height="155" viewBox="0 0 360 155" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="dr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#b52020"/>
+              </marker>
+              <marker id="dg" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+            </defs>
+            <!-- Attacker -->
+            <rect x="10" y="50" width="85" height="55" rx="7" fill="#fdeaea" stroke="#b52020" stroke-width="2"/>
+            <text x="52" y="72" text-anchor="middle" fill="#b52020" font-size="10" font-weight="700">172.18.0.11</text>
+            <text x="52" y="86" text-anchor="middle" fill="#3d4a66" font-size="9">loop contínuo</text>
+            <text x="52" y="99" text-anchor="middle" fill="#3d4a66" font-size="8">× 3.000 NOTIFs</text>
+            <!-- Flood arrows (3, spread) -->
+            <line x1="95" y1="65" x2="145" y2="65" stroke="#b52020" stroke-width="1.5" marker-end="url(#dr)"/>
+            <line x1="95" y1="77" x2="145" y2="77" stroke="#b52020" stroke-width="1.5" marker-end="url(#dr)"/>
+            <line x1="95" y1="89" x2="145" y2="89" stroke="#b52020" stroke-width="1.5" marker-end="url(#dr)"/>
+            <text x="120" y="60" text-anchor="middle" fill="#b52020" font-size="8" font-weight="700">mesmo payload</text>
+            <!-- ECU -->
+            <rect x="145" y="50" width="90" height="55" rx="7" fill="#fdeaea" stroke="#b52020" stroke-width="1.5"/>
+            <text x="190" y="72" text-anchor="middle" fill="#3d4a66" font-size="9">ECU receptor</text>
+            <text x="190" y="86" text-anchor="middle" fill="#b52020" font-size="9">buffer saturado ⚠</text>
+            <line x1="235" y1="77" x2="265" y2="77" stroke="#1a7a4a" stroke-width="1.5" marker-end="url(#dg)"/>
+            <!-- IDS -->
+            <rect x="265" y="42" width="85" height="72" rx="7" fill="#dceeff" stroke="#2563a8" stroke-width="2"/>
+            <text x="307" y="62" text-anchor="middle" fill="#1a3a6b" font-size="10" font-weight="700">IDS</text>
+            <text x="307" y="76" text-anchor="middle" fill="#3d4a66" font-size="8">f15: payload fixo</text>
+            <text x="307" y="89" text-anchor="middle" fill="#3d4a66" font-size="8">f18: diversity≈0</text>
+            <text x="307" y="102" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">✓ DETECTADO</text>
+            <!-- Label -->
+            <text x="180" y="140" text-anchor="middle" fill="#3d4a66" font-size="9">svc=0x1001 · meth=0x0001 · msg=NOTIFICATION · payload idêntico</text>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="val val-good">0,9998</div><div class="lbl">F1</div></div>
+          <div class="metric"><div class="val val-good">0</div><div class="lbl">FP</div></div>
+          <div class="metric"><div class="val val-good">13</div><div class="lbl">FN</div></div>
+          <div class="metric"><div class="val val-good">≈1,00</div><div class="lbl">AUC</div></div>
+        </div>
+
+        <div class="atk-desc">
+          <h4>Como funciona o ataque</h4>
+          <p>O atacante <span class="hi-red">172.18.0.11</span> entra em <em>loop contínuo sem pausa</em> e inunda a rede com milhares de mensagens SOME/IP por segundo, todas direcionadas ao serviço ADAS (<span class="hi">svc=0x1001, meth=0x0001, msg=NOTIFICATION</span>). Em condições normais, o servidor publica notificações ADAS periodicamente — tipicamente uma a cada dezenas ou centenas de milissegundos. O atacante reproduz esse mesmo pacote continuamente, com <strong>payload idêntico</strong> a cada transmissão.</p>
+          <p>O efeito imediato é a saturação do buffer de recepção das ECUs subscribers: elas ficam processando pacotes falsos em vez de eventos legítimos, o que configura uma negação de serviço (<em>Denial of Service</em>) no plano de dados veicular.</p>
+          <p>A <span class="hi">assinatura chave</span> capturada pelo classificador é a combinação de taxa de pacotes anormalmente alta (<strong>f17</strong>) com diversidade de payload zero (<strong>f18≈0</strong>) e tamanho de payload absolutamente fixo (<strong>f15</strong>): o atacante repete o mesmo payload sem nenhuma variação, comportamento impossível num publicador legítimo.</p>
+        </div>
+      </div>
+      <div>
+        <h3>Importância das features</h3>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f15 someip_payload_len</span><span class="pct">58,7%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:58.7%"></div></div>
+          <div class="feat-desc">comprimento do payload SOME/IP em bytes — atacante repete o mesmo tamanho fixo</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f18 src_payload_diversity</span><span class="pct">32,2%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-green" style="width:32.2%"></div></div>
+          <div class="feat-desc">fração de payloads únicos do IP nos últimos 1000 pacotes — DoS repete o mesmo payload → ≈0</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f17 src_packet_rate</span><span class="pct">4,7%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-orange" style="width:4.7%"></div></div>
+          <div class="feat-desc">taxa de pacotes por segundo enviados pelo mesmo IP (janela deslizante de 1000 pkts)</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">demais (6 features)</span><span class="pct">~4%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:4%"></div></div>
+        </div>
+
+        <h3 style="margin-top:.8rem;">Matriz de confusão</h3>
+        <table class="cm">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: DoS</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">1.994.470</td><td class="cm-fp">0</td></tr>
+          <tr><th scope="row">Real: DoS</th><td class="cm-fn">13</td><td class="cm-tp">34.683</td></tr>
+        </table>
+
+        <div class="callout callout-green" style="margin-top:.7rem; font-size:.81rem;">
+          <strong>Interpretação:</strong> o modelo aprendeu a <em>assinatura do ataque</em> (payload de tamanho fixo sem variação), não o IP do atacante. Um novo atacante com outro IP usando o mesmo padrão seria detectado.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 8 — FUZZY
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="slide-header">
+    <div class="title">Classificador Fuzzy — SD Flooding + Random ADAS Payload</div>
+    <div class="tag">Binário · 10 features · sinal oposto ao DoS</div>
+    <div class="slide-num">8 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="term-box">
+      <div class="term-def"><span class="term-label">Flooding:</span> inundação de pacotes para saturar a rede ou as ECUs — mesmo conceito do DoS, mas aqui com <em>payload aleatório</em> em cada mensagem. O objetivo é encontrar vulnerabilidades injetando entradas inesperadas (técnica de <em>fuzzing</em>), não apenas degradar a disponibilidade.</div>
+      <div class="term-def"><span class="term-label">Fuzzing:</span> técnica de teste de segurança que envia dados aleatórios, inválidos ou inesperados para um sistema, buscando provocar crashes, comportamentos anômalos ou vazamentos de informação. Em SOME/IP, os bytes do payload são gerados aleatoriamente a cada pacote.</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="diag" style="margin-bottom:.8rem;">
+          <svg width="360" height="170" viewBox="0 0 360 170" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="fa" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#b05a00"/>
+              </marker>
+              <marker id="fg" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+            </defs>
+            <!-- Attacker -->
+            <rect x="10" y="60" width="85" height="55" rx="7" fill="#fff3e0" stroke="#b05a00" stroke-width="2"/>
+            <text x="52" y="82" text-anchor="middle" fill="#b05a00" font-size="10" font-weight="700">.12 / .17</text>
+            <text x="52" y="96" text-anchor="middle" fill="#3d4a66" font-size="9">payload aleatório</text>
+            <text x="52" y="109" text-anchor="middle" fill="#3d4a66" font-size="8">em cada pacote</text>
+            <!-- Comp A -->
+            <rect x="120" y="25" width="100" height="40" rx="6" fill="#fff3e0" stroke="#b05a00" stroke-width="1.5"/>
+            <text x="170" y="42" text-anchor="middle" fill="#b05a00" font-size="9" font-weight="700">Comp A — SD Flood</text>
+            <text x="170" y="57" text-anchor="middle" fill="#3d4a66" font-size="8">svc=0xFFFF · 1332B random</text>
+            <line x1="95" y1="75" x2="120" y2="48" stroke="#b05a00" stroke-width="1.4" marker-end="url(#fa)"/>
+            <!-- Comp B -->
+            <rect x="120" y="105" width="100" height="40" rx="6" fill="#fff3e0" stroke="#b05a00" stroke-width="1.5"/>
+            <text x="170" y="122" text-anchor="middle" fill="#b05a00" font-size="9" font-weight="700">Comp B — ADAS random</text>
+            <text x="170" y="137" text-anchor="middle" fill="#3d4a66" font-size="8">svc=0x1001 · payload ≠ sempre</text>
+            <line x1="95" y1="100" x2="120" y2="122" stroke="#b05a00" stroke-width="1.4" marker-end="url(#fa)"/>
+            <!-- IDS -->
+            <rect x="262" y="55" width="88" height="65" rx="7" fill="#dceeff" stroke="#2563a8" stroke-width="2"/>
+            <text x="306" y="76" text-anchor="middle" fill="#1a3a6b" font-size="10" font-weight="700">IDS</text>
+            <text x="306" y="90" text-anchor="middle" fill="#3d4a66" font-size="8">f08: Hamming alto</text>
+            <text x="306" y="103" text-anchor="middle" fill="#3d4a66" font-size="8">f13: repeat≈0</text>
+            <text x="306" y="112" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">✓ DETECTADO</text>
+            <line x1="220" y1="87" x2="262" y2="87" stroke="#1a7a4a" stroke-width="1.5" marker-end="url(#fg)"/>
+            <!-- Bottom note -->
+            <text x="180" y="158" text-anchor="middle" fill="#3d4a66" font-size="8">DoS: f08≈0, f18≈0 (repete) · Fuzzy: f08 alto, f18≈1 (aleatoriza) — sinais opostos</text>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="val val-good">0,9979</div><div class="lbl">F1</div></div>
+          <div class="metric"><div class="val val-warn">330</div><div class="lbl">FP</div></div>
+          <div class="metric"><div class="val val-good">74</div><div class="lbl">FN</div></div>
+          <div class="metric"><div class="val val-good">0,9999</div><div class="lbl">AUC</div></div>
+        </div>
+
+        <div class="atk-desc">
+          <h4>Como funciona o ataque</h4>
+          <p><em>Fuzzing</em> é uma técnica de teste de segurança que injeta entradas aleatórias ou inesperadas em um sistema para provocar comportamentos anômalos, crashes ou vazamentos de informação. Nos ataques capturados, os atacantes <span class="hi-red">.12</span> e <span class="hi-red">.17</span> geram um <strong>payload diferente em cada pacote</strong> — exatamente o oposto do DoS.</p>
+          <p><strong>Componente A — SD Flooding:</strong> o atacante inunda o canal de Service Discovery (<span class="hi">svc=0xFFFF</span>) com pacotes de <strong>1332 bytes</strong> de conteúdo aleatório. Esse tamanho é fixo na simulação do Kim (corresponde ao payload máximo de SD configurado no ambiente) — em cenários reais de fuzzing, o tamanho poderia variar. O objetivo é corromper o mecanismo de registro e descoberta de serviços, potencialmente levando ECUs a perderem referências de serviços legítimos.</p>
+          <p><strong>Componente B — ADAS Random Payload:</strong> o atacante injeta notificações no serviço ADAS (<span class="hi">svc=0x1001</span>) com payloads gerados aleatoriamente, tentando provocar comportamentos inesperados nos sistemas que processam esses dados — como módulos de frenagem autônoma ou controle de trajetória.</p>
+          <p>A <span class="hi">assinatura chave</span> é a alta <strong>distância de Hamming</strong> entre payloads consecutivos (<strong>f08≈1</strong>): cada pacote muda todos os bytes, algo que nenhum publicador legítimo faz.</p>
+        </div>
+      </div>
+      <div>
+        <h3>Importância das features</h3>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f08 someip_payload_change</span><span class="pct">51,3%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:51.3%"></div></div>
+          <div class="feat-desc">distância de Hamming normalizada entre payloads consecutivos — fuzzing → bytes mudam a cada pacote → ≈1</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f15 someip_payload_len</span><span class="pct">16,4%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-orange" style="width:16.4%"></div></div>
+          <div class="feat-desc">comprimento do payload SOME/IP — Componente A inunda SD com pacotes de 1332B fixos</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f17 src_packet_rate</span><span class="pct">13,1%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-green" style="width:13.1%"></div></div>
+          <div class="feat-desc">taxa de pacotes por segundo enviados pelo mesmo IP (janela deslizante de 1000 pkts)</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f13 payload_repeat_rate</span><span class="pct">12,9%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-purple" style="width:12.9%"></div></div>
+          <div class="feat-desc">fração dos últimos 5 payloads idênticos ao atual — fuzzing gera payloads sempre diferentes → ≈0</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f18 src_payload_diversity</span><span class="pct">4,0%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-green" style="width:4%"></div></div>
+          <div class="feat-desc">diversidade de payloads únicos do IP nos últimos 1000 pacotes — fuzzing aleatoriza → ≈1</div>
+        </div>
+
+        <h3 style="margin-top:.8rem;">Matriz de confusão</h3>
+        <table class="cm">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: Fuzzy</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">3.617.998</td><td class="cm-fp">330</td></tr>
+          <tr><th scope="row">Real: Fuzzy</th><td class="cm-fn">74</td><td class="cm-tp">95.035</td></tr>
+        </table>
+
+        <div class="callout callout-blue" style="margin-top:.7rem; font-size:.81rem;">
+          <strong>f08 Hamming (51,3%):</strong> cada pacote do atacante tem bytes diferentes dos anteriores — distância de Hamming alta. No DoS, o mesmo payload se repete e o Hamming é quase zero.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 9 — MITM MULTI
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="slide-header">
+    <div class="title">MITM Multi-Attacker — Event Relay + SD Spoofing</div>
+    <div class="tag">Binário · 12 features · IP forjado</div>
+    <div class="slide-num">9 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="term-box">
+      <div class="term-def"><span class="term-label">Offer Service (TTL &gt; 0):</span> mensagem SOME/IP-SD enviada por um servidor para anunciar que um serviço está disponível. O campo TTL indica por quantos segundos o anúncio é válido — enquanto TTL &gt; 0, os subscribers sabem que o servidor está ativo. Quando o TTL expira ou o servidor envia o mesmo anúncio com <strong>TTL = 0</strong> (<em>Stop Offer</em>), os subscribers entendem que o serviço foi encerrado.</div>
+      <div class="term-def"><span class="term-label">Spoofing:</span> falsificação de identidade em rede — o atacante forja o endereço IP de origem de um pacote, fazendo-o parecer vir de uma fonte legítima. Como o protocolo SOME/IP não autentica o IP de origem, os receptores aceitam a mensagem como se fosse do servidor real.</div>
+      <div class="term-def"><span class="term-label">MITM (Man-in-the-Middle):</span> o atacante se posiciona entre dois comunicantes, interceptando e/ou substituindo mensagens sem que nenhum dos lados perceba. Aqui: dois atacantes coordenados substituem o fluxo legítimo de dados ADAS por um relay controlado pelo invasor.</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="diag" style="margin-bottom:.8rem;">
+          <svg width="360" height="195" viewBox="0 0 360 195" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="mp" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#5a2fa0"/>
+              </marker>
+              <marker id="mg" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+              <marker id="ml" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#2563a8" opacity=".5"/>
+              </marker>
+            </defs>
+            <!-- Legit server -->
+            <rect x="10" y="70" width="70" height="40" rx="6" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="1.5"/>
+            <text x="45" y="86" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">.10 ADAS</text>
+            <text x="45" y="100" text-anchor="middle" fill="#3d4a66" font-size="8">legítimo</text>
+            <line x1="80" y1="90" x2="110" y2="70" stroke="#2563a8" stroke-width="1" stroke-dasharray="3,2" opacity=".6" marker-end="url(#ml)"/>
+
+            <!-- Attacker .14 relay -->
+            <rect x="110" y="42" width="90" height="45" rx="6" fill="#f0ebff" stroke="#5a2fa0" stroke-width="1.8"/>
+            <text x="155" y="59" text-anchor="middle" fill="#5a2fa0" font-size="9" font-weight="700">.14 relay</text>
+            <text x="155" y="72" text-anchor="middle" fill="#3d4a66" font-size="8">retransmite como</text>
+            <text x="155" y="82" text-anchor="middle" fill="#5a2fa0" font-size="8" font-weight="700">svc=0x100B</text>
+
+            <!-- Attacker .15 spoof -->
+            <rect x="110" y="115" width="90" height="45" rx="6" fill="#f0ebff" stroke="#5a2fa0" stroke-width="1.8"/>
+            <text x="155" y="132" text-anchor="middle" fill="#5a2fa0" font-size="9" font-weight="700">.15 spoof</text>
+            <text x="155" y="146" text-anchor="middle" fill="#3d4a66" font-size="8">IP.src=.10 FORJADO</text>
+            <text x="155" y="156" text-anchor="middle" fill="#b52020" font-size="8" font-weight="700">Stop Offer forjado ⚠</text>
+
+            <!-- Arrows from attackers -->
+            <line x1="200" y1="64" x2="245" y2="90" stroke="#5a2fa0" stroke-width="1.5" marker-end="url(#mp)"/>
+            <line x1="200" y1="138" x2="245" y2="110" stroke="#5a2fa0" stroke-width="1.5" marker-end="url(#mp)"/>
+
+            <!-- Subscriber -->
+            <rect x="245" y="72" width="70" height="40" rx="6" fill="#fdeaea" stroke="#b52020" stroke-width="1.2"/>
+            <text x="280" y="88" text-anchor="middle" fill="#3d4a66" font-size="9">Subscriber</text>
+            <text x="280" y="101" text-anchor="middle" fill="#b52020" font-size="8">dados forjados</text>
+            <line x1="315" y1="92" x2="342" y2="92" stroke="#1a7a4a" stroke-width="1.2" marker-end="url(#mg)"/>
+
+            <!-- IDS -->
+            <rect x="305" y="55" width="50" height="75" rx="6" fill="#dceeff" stroke="#2563a8" stroke-width="1.5"/>
+            <text x="330" y="74" text-anchor="middle" fill="#1a3a6b" font-size="9" font-weight="700">IDS</text>
+            <text x="330" y="88" text-anchor="middle" fill="#3d4a66" font-size="7">f21: relay</text>
+            <text x="330" y="100" text-anchor="middle" fill="#3d4a66" font-size="7">svc=0x100B</text>
+            <text x="330" y="118" text-anchor="middle" fill="#1a7a4a" font-size="8" font-weight="700">✓</text>
+
+            <text x="180" y="182" text-anchor="middle" fill="#b52020" font-size="8" font-weight="700">⚠ .15 usa IP.src=.10 (servidor legítimo) forjado — label por conteúdo SOME/IP</text>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="val val-good">0,9984</div><div class="lbl">F1</div></div>
+          <div class="metric"><div class="val val-good">167</div><div class="lbl">FP</div></div>
+          <div class="metric"><div class="val val-warn">349</div><div class="lbl">FN</div></div>
+          <div class="metric"><div class="val val-good">1,0000</div><div class="lbl">AUC</div></div>
+        </div>
+
+        <div class="atk-desc">
+          <h4>Como funciona o ataque</h4>
+          <p>Dois atacantes coordenados montam uma operação de Man-in-the-Middle em três fases simultâneas.</p>
+          <p><strong>Componente A — Event Relay (<span class="hi-red">.14</span>):</strong> o atacante se inscreve no serviço ADAS legítimo (<span class="hi">svc=0x1001</span>), recebe os eventos reais e os retransmite através de um serviço proxy próprio (<span class="hi">svc=0x100B, instance=0x000B</span>). Os subscribers passam a receber dados via esse serviço intermediário controlado pelo atacante, que pode alterar ou atrasar notificações ADAS antes de repassá-las.</p>
+          <p><strong>Componente B — SD Spoofing (<span class="hi-red">.15</span>):</strong> o atacante forja o endereço IP de origem, enviando mensagens SOME/IP-SD com <span class="hi">IP.src = 172.18.0.10</span> (o servidor legítimo). No SOME/IP-SD, um servidor anuncia sua presença com <em>Offer Service</em> (TTL &gt; 0); quando o serviço é encerrado, envia <em>Stop Offer</em> — a mesma mensagem com <span class="hi">TTL = 0</span>, sinalizando que o serviço não está mais disponível. O atacante envia esse <em>Stop Offer</em> falso com IP forjado, fazendo os subscribers acreditarem que o servidor ADAS legítimo foi desligado e levando-os a procurar outra fonte — o relay do atacante .14.</p>
+          <p><strong>Componente C — ADAS Injection:</strong> com os subscribers "à deriva", o atacante .14 também injeta notificações forjadas diretamente como <span class="hi">svc=0x1001</span>, assumindo completamente a identidade do servidor legítimo.</p>
+        </div>
+      </div>
+      <div>
+        <h3>Importância das features</h3>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f21 is_relay_service</span><span class="pct">69,7%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-purple" style="width:69.7%"></div></div>
+          <div class="feat-desc">flag binária: 1 se service_id = 0x100B — serviço relay do atacante, inexistente no tráfego legítimo</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f15 someip_payload_len</span><span class="pct">28,7%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:28.7%"></div></div>
+          <div class="feat-desc">comprimento do payload — mensagens SD forjadas (Stop Offer com IP forjado) têm tamanho característico</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f19 is_sd + demais</span><span class="pct">1,6%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-orange" style="width:1.6%"></div></div>
+          <div class="feat-desc">flag binária: 1 se service_id = 0xFFFF (canal SOME/IP Service Discovery)</div>
+        </div>
+
+        <h3 style="margin-top:.8rem;">Matriz de confusão</h3>
+        <table class="cm">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: MITM</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">2.137.546</td><td class="cm-fp">167</td></tr>
+          <tr><th scope="row">Real: MITM</th><td class="cm-fn">349</td><td class="cm-tp">165.104</td></tr>
+        </table>
+
+        <div class="callout callout-blue" style="margin-top:.7rem; font-size:.81rem;">
+          <strong>f21 is_relay_service (69,7%):</strong> o service_id=0x100B não existe no tráfego legítimo — qualquer pacote com esse ID é ataque. Assinatura quasi-perfeita e IP-agnóstica.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 10 — MITM SINGLE
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="slide-header">
+    <div class="title">MITM Single-Attacker — SD Withdraw + ADAS Injection</div>
+    <div class="tag">Binário · 12 features · f19 dominante</div>
+    <div class="slide-num">10 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="term-box">
+      <div class="term-def"><span class="term-label">SD Stop Offer (Withdraw):</span> mensagem do protocolo SOME/IP-SD usada para anunciar que um serviço foi encerrado. Um servidor envia <em>Offer Service</em> com <strong>TTL &gt; 0</strong> para dizer "estou disponível" e a mesma mensagem com <strong>TTL = 0</strong> para dizer "fui desligado". O atacante envia continuamente esse <em>Stop Offer</em> falso, forçando os subscribers a se desconectarem do servidor legítimo.</div>
+      <div class="term-def"><span class="term-label">ADAS Injection:</span> injeção de notificações falsas no serviço ADAS (<em>Advanced Driver-Assistance Systems</em>) — o atacante assume a identidade do servidor legítimo e passa a enviar dados fabricados para os módulos de assistência ao condutor, como controle de trajetória ou frenagem autônoma.</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="diag" style="margin-bottom:.8rem;">
+          <svg width="360" height="185" viewBox="0 0 360 185" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="sa" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#5a2fa0"/>
+              </marker>
+              <marker id="sg" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+            </defs>
+            <!-- Legit server -->
+            <rect x="10" y="80" width="70" height="40" rx="6" fill="#e6f5ec" stroke="#1a7a4a" stroke-width="1.5"/>
+            <text x="45" y="96" text-anchor="middle" fill="#1a7a4a" font-size="9" font-weight="700">.10 ADAS</text>
+            <text x="45" y="110" text-anchor="middle" fill="#3d4a66" font-size="8">legítimo</text>
+
+            <!-- Attacker .13 -->
+            <rect x="115" y="25" width="100" height="40" rx="6" fill="#f0ebff" stroke="#5a2fa0" stroke-width="1.8"/>
+            <text x="165" y="43" text-anchor="middle" fill="#5a2fa0" font-size="9" font-weight="700">.13 Comp A</text>
+            <text x="165" y="57" text-anchor="middle" fill="#3d4a66" font-size="8">SD Withdraw (TTL=0)</text>
+            <text x="165" y="57"></text>
+
+            <rect x="115" y="105" width="100" height="40" rx="6" fill="#f0ebff" stroke="#5a2fa0" stroke-width="1.8"/>
+            <text x="165" y="123" text-anchor="middle" fill="#5a2fa0" font-size="9" font-weight="700">.13 Comp B</text>
+            <text x="165" y="137" text-anchor="middle" fill="#3d4a66" font-size="8">ADAS injection forjado</text>
+
+            <!-- Subscriber (victim) -->
+            <rect x="255" y="75" width="70" height="50" rx="6" fill="#fdeaea" stroke="#b52020" stroke-width="1.2"/>
+            <text x="290" y="95" text-anchor="middle" fill="#3d4a66" font-size="9">Subscriber</text>
+            <text x="290" y="109" text-anchor="middle" fill="#b52020" font-size="8">desconectado</text>
+            <text x="290" y="120" text-anchor="middle" fill="#b52020" font-size="8">do legítimo ⚠</text>
+
+            <!-- Arrows -->
+            <line x1="165" y1="65" x2="255" y2="83" stroke="#b52020" stroke-width="1.4" stroke-dasharray="3,2" marker-end="url(#sa)"/>
+            <line x1="165" y1="105" x2="255" y2="112" stroke="#5a2fa0" stroke-width="1.4" marker-end="url(#sa)"/>
+
+            <!-- IDS -->
+            <rect x="335" y="65" width="18" height="70" rx="4" fill="#dceeff" stroke="#2563a8" stroke-width="1.5"/>
+            <text x="344" y="100" text-anchor="middle" fill="#1a7a4a" font-size="8" font-weight="700" transform="rotate(-90,344,100)">IDS ✓</text>
+
+            <text x="165" y="170" text-anchor="middle" fill="#3d4a66" font-size="8">f19=is_sd detecta o SD Withdraw · ECUs legítimas não retiram serviços continuamente</text>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="val val-good">0,9994</div><div class="lbl">F1</div></div>
+          <div class="metric"><div class="val val-good">61</div><div class="lbl">FP</div></div>
+          <div class="metric"><div class="val val-good">143</div><div class="lbl">FN</div></div>
+          <div class="metric"><div class="val val-good">1,0000</div><div class="lbl">AUC</div></div>
+        </div>
+
+        <div class="atk-desc">
+          <h4>Como funciona o ataque</h4>
+          <p>Um único atacante (<span class="hi-red">172.18.0.13</span>) executa o MitM em duas fases sequenciais.</p>
+          <p><strong>Componente A — SD Withdraw:</strong> o atacante envia mensagens SOME/IP-SD do tipo <em>Offer Service</em> com <span class="hi">TTL=0</span>, o que equivale a um <em>Stop Offer</em> — anunciando que serviços estão sendo encerrados. Essas mensagens são enviadas continuamente, forçando todos os subscribers a se desconectarem do servidor ADAS legítimo (<span class="hi">.10</span>). ECUs legítimas não retiram serviços abruptamente e de forma repetida — este padrão é a anomalia detectada pela feature <strong>f19_is_sd</strong> com 92,9% de importância.</p>
+          <p><strong>Componente B — ADAS Injection:</strong> com os subscribers agora sem fonte legítima, o atacante passa a injetar suas próprias notificações ADAS (<span class="hi">svc=0x1001, meth=0x0001</span>), assumindo o papel do servidor. Os sistemas veiculares que dependem desses dados — como módulos de assistência à condução — passam a receber informações forjadas, sem qualquer indicação visual de falha.</p>
+          <p>É o ataque mais silencioso do dataset: não gera flood e mantém a aparência de operação normal para quem não monitora o Service Discovery.</p>
+        </div>
+      </div>
+      <div>
+        <h3>Importância das features</h3>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f19 is_sd</span><span class="pct">92,9%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:92.9%"></div></div>
+          <div class="feat-desc">flag binária: 1 se service_id = 0xFFFF (SOME/IP-SD) — atacante emite Stop Offer (TTL=0) continuamente</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f18 src_payload_diversity</span><span class="pct">2,5%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-green" style="width:2.5%"></div></div>
+          <div class="feat-desc">diversidade de payloads únicos do IP nos últimos 1000 pacotes</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f17 src_packet_rate</span><span class="pct">2,4%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-orange" style="width:2.4%"></div></div>
+          <div class="feat-desc">taxa de pacotes por segundo enviados pelo mesmo IP (janela deslizante de 1000 pkts)</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">demais (9 features)</span><span class="pct">~2%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-purple" style="width:2%"></div></div>
+        </div>
+
+        <h3 style="margin-top:.8rem;">Matriz de confusão</h3>
+        <table class="cm">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: MITM</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">1.935.942</td><td class="cm-fp">61</td></tr>
+          <tr><th scope="row">Real: MITM</th><td class="cm-fn">143</td><td class="cm-tp">179.543</td></tr>
+        </table>
+
+        <div class="callout callout-green" style="margin-top:.7rem; font-size:.81rem;">
+          <strong>Por que f19 domina com 92,9%?</strong> ECUs legítimas usam o canal SD esporadicamente (Offer Service periódico, a cada dezenas de segundos). O atacante usa o mesmo canal <em>continuamente</em>, em loop, para manter os subscribers desconectados. No dataset, a esmagadora maioria dos pacotes com <code>service_id=0xFFFF</code> são do atacante — o sinal f19=1 virou uma assinatura quase perfeita do Componente A.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 11 — FAKECLIENTID
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s11">
+  <div class="slide-header">
+    <div class="title">Classificador FakeClientID — Rotação de Client ID em REQUESTs</div>
+    <div class="tag">Binário · 13 features · Alkhatib 2021</div>
+    <div class="slide-num">11 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="term-box">
+      <div class="term-def"><span class="term-label">Client ID:</span> campo de 2 bytes no cabeçalho SOME/IP que identifica unicamente o cliente de uma sessão request-response. Em operação normal, cada ECU usa um <code>client_id</code> fixo por sessão — o servidor usa esse campo para rotear as respostas ao solicitante correto.</div>
+      <div class="term-def"><span class="term-label">FakeClientID:</span> o atacante rotaciona continuamente múltiplos <code>client_ids</code> falsos nas mensagens REQUEST. Isso confunde a tabela de sessões do servidor (associações IP↔client_id inválidas) e pode esgotar recursos, pois o servidor tenta manter contexto para cada ID diferente.</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="diag" style="margin-bottom:.8rem;">
+          <svg width="360" height="160" viewBox="0 0 360 160" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="fca" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#b52020"/>
+              </marker>
+              <marker id="fcg" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                <polygon points="0 0, 7 2.5, 0 5" fill="#1a7a4a"/>
+              </marker>
+            </defs>
+            <!-- Attacker -->
+            <rect x="10" y="55" width="90" height="60" rx="7" fill="#fdeaea" stroke="#b52020" stroke-width="2"/>
+            <text x="55" y="76" text-anchor="middle" fill="#b52020" font-size="10" font-weight="700">Atacante</text>
+            <text x="55" y="91" text-anchor="middle" fill="#3d4a66" font-size="8">client_id=0x0A01</text>
+            <text x="55" y="103" text-anchor="middle" fill="#3d4a66" font-size="8">client_id=0x0B44</text>
+            <text x="55" y="115" text-anchor="middle" fill="#b52020" font-size="8">client_id=0xC923…</text>
+            <!-- Arrows -->
+            <line x1="100" y1="75" x2="148" y2="75" stroke="#b52020" stroke-width="1.5" marker-end="url(#fca)"/>
+            <line x1="100" y1="88" x2="148" y2="88" stroke="#b52020" stroke-width="1.5" marker-end="url(#fca)"/>
+            <line x1="100" y1="101" x2="148" y2="101" stroke="#b52020" stroke-width="1.5" marker-end="url(#fca)"/>
+            <text x="124" y="68" text-anchor="middle" fill="#b52020" font-size="8" font-weight="700">REQUESTs</text>
+            <!-- Server -->
+            <rect x="148" y="45" width="100" height="80" rx="7" fill="#fff3e0" stroke="#b05a00" stroke-width="1.5"/>
+            <text x="198" y="67" text-anchor="middle" fill="#b05a00" font-size="9" font-weight="700">Servidor SOME/IP</text>
+            <text x="198" y="82" text-anchor="middle" fill="#3d4a66" font-size="8">tabela de sessões</text>
+            <text x="198" y="95" text-anchor="middle" fill="#b52020" font-size="8">0x0A01 → ???</text>
+            <text x="198" y="108" text-anchor="middle" fill="#b52020" font-size="8">0x0B44 → ???</text>
+            <text x="198" y="121" text-anchor="middle" fill="#b52020" font-size="8">confusão ⚠</text>
+            <!-- IDS -->
+            <line x1="248" y1="85" x2="278" y2="85" stroke="#1a7a4a" stroke-width="1.5" marker-end="url(#fcg)"/>
+            <rect x="278" y="55" width="75" height="62" rx="7" fill="#dceeff" stroke="#2563a8" stroke-width="2"/>
+            <text x="315" y="76" text-anchor="middle" fill="#1a3a6b" font-size="10" font-weight="700">IDS</text>
+            <text x="315" y="90" text-anchor="middle" fill="#3d4a66" font-size="8">f22: clientid</text>
+            <text x="315" y="103" text-anchor="middle" fill="#3d4a66" font-size="8">diversity alto</text>
+            <text x="315" y="112" text-anchor="middle" fill="#1a7a4a" font-size="8" font-weight="700">✓ DETECTADO</text>
+            <text x="180" y="148" text-anchor="middle" fill="#3d4a66" font-size="8">ECU legítima: 1 client_id fixo · Atacante: dezenas de client_ids diferentes</text>
+          </svg>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="val val-good">0,9982</div><div class="lbl">F1</div></div>
+          <div class="metric"><div class="val val-good">0</div><div class="lbl">FP</div></div>
+          <div class="metric"><div class="val val-good">1</div><div class="lbl">FN</div></div>
+          <div class="metric"><div class="val val-good">0,9998</div><div class="lbl">AUC</div></div>
+        </div>
+        <div class="atk-desc">
+          <h4>Como funciona o ataque</h4>
+          <p>O atacante se conecta à rede e envia mensagens REQUEST (<code>msg_type &lt; 0x80</code>) para serviços legítimos, mas em vez de usar um <span class="hi">client_id fixo</span>, rotaciona dezenas de IDs diferentes em sequência rápida.</p>
+          <p>O servidor SOME/IP tenta manter o contexto de cada client_id (para saber para onde rotear as respostas). Com IDs que nunca se repetem, a tabela de sessões cresce continuamente, consumindo memória e CPU. As respostas são enviadas para endereços inexistentes, gerando tráfego extra e latência.</p>
+          <p>A <span class="hi">assinatura chave</span> é a combinação de alta <strong>diversidade de serviços</strong> (<strong>f20</strong>, 67,5%) com alta <strong>diversidade de client_ids</strong> (<strong>f22</strong>, 29,1%) — padrão impossível para uma ECU legítima especializada.</p>
+        </div>
+      </div>
+      <div>
+        <h3>Importância das features</h3>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f20 src_service_diversity</span><span class="pct">67,5%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:67.5%"></div></div>
+          <div class="feat-desc">service_ids únicos usados pelo IP nos últimos 100 pacotes — ECU legítima usa 1–2 serviços; atacante varre vários</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f22 src_clientid_diversity</span><span class="pct">29,1%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-purple" style="width:29.1%"></div></div>
+          <div class="feat-desc">client_ids únicos em REQUESTs do IP (janela 100) — feature exclusiva deste classificador; atacante rotaciona → cresce</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">f17 src_packet_rate</span><span class="pct">2,3%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-orange" style="width:2.3%"></div></div>
+          <div class="feat-desc">taxa de pacotes por segundo enviados pelo mesmo IP (janela deslizante de 1000 pkts)</div>
+        </div>
+        <div class="feat">
+          <div class="feat-top"><span class="name">demais (10 features)</span><span class="pct">&lt;1%</span></div>
+          <div class="feat-bg"><div class="feat-bar b-blue" style="width:1%"></div></div>
+        </div>
+
+        <h3 style="margin-top:.8rem;">Matriz de confusão</h3>
+        <table class="cm">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: FakeID</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">898</td><td class="cm-fp">0</td></tr>
+          <tr><th scope="row">Real: FakeID</th><td class="cm-fn">1</td><td class="cm-tp">277</td></tr>
+        </table>
+
+        <div class="callout callout-blue" style="margin-top:.7rem; font-size:.81rem;">
+          <strong>Dataset Alkhatib 2021:</strong> labels pré-definidos em CSV — não derivados da spec SOME/IP. Menor volume (~3.920 amostras, split 70/30), mas o padrão de rotação de IDs é suficientemente distinto para separação quase perfeita.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 12 — É POSSÍVEL DISCERNIR O TIPO DE ATAQUE?
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s12">
+  <div class="slide-header">
+    <div class="title">É possível discernir o tipo de ataque?</div>
+    <div class="tag">Classificador multiclasse · 6 classes</div>
+    <div class="slide-num">12 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols">
+      <div>
+        <h2>Sim — cada ataque tem assinatura distinta</h2>
+        <table class="t" style="margin-bottom:.8rem;">
+          <tr>
+            <th scope="col">Classe</th>
+            <th scope="col">f08 Hamming</th>
+            <th scope="col">f13 Repeat</th>
+            <th scope="col">f15 Len</th>
+            <th scope="col">f17 Rate</th>
+            <th scope="col">f18 Div</th>
+            <th scope="col">f19 SD</th>
+            <th scope="col">f21 Relay</th>
+          </tr>
+          <tr><td><span class="pill pill-green">Normal</span></td><td>baixo</td><td>médio</td><td>variado</td><td>baixo</td><td>médio</td><td>—</td><td>—</td></tr>
+          <tr><td><span class="pill pill-red">DoS</span></td><td>≈0</td><td>alto</td><td>fixo</td><td>alto</td><td>≈0</td><td>não</td><td>não</td></tr>
+          <tr><td><span class="pill pill-orange">Fuzzy</span></td><td><strong>alto</strong></td><td>≈0</td><td>1332B</td><td>alto</td><td>≈1</td><td>sim</td><td>não</td></tr>
+          <tr><td><span class="pill pill-purple">MITM Multi</span></td><td>baixo</td><td>médio</td><td>variado</td><td>médio</td><td>médio</td><td>sim</td><td><strong>sim</strong></td></tr>
+          <tr><td><span class="pill pill-purple">MITM Single</span></td><td>baixo</td><td>médio</td><td>variado</td><td>médio</td><td>médio</td><td><strong>alto</strong></td><td>não</td></tr>
+          <tr><td><span class="pill pill-blue">FakeClientID</span></td><td>baixo</td><td>médio</td><td>normal</td><td>baixo</td><td>médio</td><td>não</td><td>não</td></tr>
+        </table>
+
+        <div class="callout callout-orange">
+          <strong>Dificuldade:</strong> MITM Multi e MITM Single têm perfis comportamentais gerais similares — diferenciados pela presença de <code>f21_is_relay_service</code> (Multi) vs alta densidade de <code>f19_is_sd</code> (Single).
+        </div>
+      </div>
+      <div>
+        <h3>Pipeline multiclasse</h3>
+        <div class="flow" style="flex-direction:column; align-items:flex-start; gap:.4rem; margin-bottom:.7rem;">
+          <div style="display:flex; align-items:center; gap:.4rem;">
+            <div class="flow-box done" style="font-size:11px;">Kim PCAPs → 01_features.py</div>
+            <div class="flow-arrow">→</div>
+            <span style="font-size:11px; color:var(--gray-4);">classes 0–4</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:.4rem;">
+            <div class="flow-box done" style="font-size:11px;">Alkhatib → fake_client_id/01_features.py</div>
+            <div class="flow-arrow">→</div>
+            <span style="font-size:11px; color:var(--gray-4);">classe 5</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:.4rem;">
+            <div class="flow-box next" style="font-size:11px;">01b_merge + 13 features</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box next" style="font-size:11px;">XGBoost multi:softprob</div>
+          </div>
+        </div>
+        <table class="t" style="font-size:11.5px;">
+          <tr><th scope="col">Label</th><th scope="col">Classe</th><th scope="col">Dataset</th></tr>
+          <tr><td>0</td><td>Benigno</td><td>Kim + Alkhatib</td></tr>
+          <tr><td>1</td><td><span class="pill pill-red">DoS</span></td><td>Kim</td></tr>
+          <tr><td>2</td><td><span class="pill pill-orange">Fuzzy</span></td><td>Kim</td></tr>
+          <tr><td>3</td><td><span class="pill pill-purple">MITM Multi</span></td><td>Kim</td></tr>
+          <tr><td>4</td><td><span class="pill pill-purple">MITM Single</span></td><td>Kim</td></tr>
+          <tr><td>5</td><td><span class="pill pill-blue">FakeClientID</span></td><td>Alkhatib</td></tr>
+        </table>
+        <div class="callout callout-blue" style="margin-top:.6rem; font-size:.81rem;">
+          Re-treino com labels por conteúdo pendente. FakeClientID é o mais furtivo — mesma taxa e tamanho de pacotes, mas <code>client_id</code> rota por sessão (feature <code>f22_src_clientid_diversity</code>).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 12 — MATRIZES DE CONFUSÃO COMPARATIVAS
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s13">
+  <div class="slide-header">
+    <div class="title">Matrizes de Confusão — Comparativo dos 5 Classificadores</div>
+    <div class="tag">Resultados no conjunto de teste</div>
+    <div class="slide-num">13 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols">
+      <div class="card">
+        <h3>DoS — F1=0,9998</h3>
+        <table class="cm" style="margin-bottom:.5rem;">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: DoS</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">1.994.470</td><td class="cm-fp">0</td></tr>
+          <tr><th scope="row">Real: DoS</th><td class="cm-fn">13</td><td class="cm-tp">34.683</td></tr>
+        </table>
+        <div style="font-size:11px; color:var(--gray-4);">FPR=0,000% · FNR=0,037% · Suporte=34.696</div>
+      </div>
+      <div class="card">
+        <h3>Fuzzy — F1=0,9979</h3>
+        <table class="cm" style="margin-bottom:.5rem;">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: Fuzzy</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">3.617.998</td><td class="cm-fp">330</td></tr>
+          <tr><th scope="row">Real: Fuzzy</th><td class="cm-fn">74</td><td class="cm-tp">95.035</td></tr>
+        </table>
+        <div style="font-size:11px; color:var(--gray-4);">FPR=0,009% · FNR=0,078% · Suporte=95.109</div>
+      </div>
+      <div class="card">
+        <h3>MITM Multi — F1=0,9984</h3>
+        <table class="cm" style="margin-bottom:.5rem;">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: MITM</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">2.137.546</td><td class="cm-fp">167</td></tr>
+          <tr><th scope="row">Real: MITM</th><td class="cm-fn">349</td><td class="cm-tp">165.104</td></tr>
+        </table>
+        <div style="font-size:11px; color:var(--gray-4);">FPR=0,008% · FNR=0,211% · Suporte=165.453</div>
+      </div>
+      <div class="card">
+        <h3>MITM Single — F1=0,9994</h3>
+        <table class="cm" style="margin-bottom:.5rem;">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: MITM</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">1.935.942</td><td class="cm-fp">61</td></tr>
+          <tr><th scope="row">Real: MITM</th><td class="cm-fn">143</td><td class="cm-tp">179.543</td></tr>
+        </table>
+        <div style="font-size:11px; color:var(--gray-4);">FPR=0,003% · FNR=0,080% · Suporte=179.686</div>
+      </div>
+      <div class="card">
+        <h3>FakeClientID — F1=0,9982</h3>
+        <table class="cm" style="margin-bottom:.5rem;">
+          <tr><th scope="col"></th><th scope="col">Prev: Normal</th><th scope="col">Prev: FakeID</th></tr>
+          <tr><th scope="row">Real: Normal</th><td class="cm-tn">898</td><td class="cm-fp">0</td></tr>
+          <tr><th scope="row">Real: FakeID</th><td class="cm-fn">1</td><td class="cm-tp">277</td></tr>
+        </table>
+        <div style="font-size:11px; color:var(--gray-4);">FPR=0,000% · FNR=0,360% · Suporte=278 · Dataset: Alkhatib 2021</div>
+      </div>
+    </div>
+
+    <table class="t" style="margin-top:.8rem; font-size:.82rem;">
+      <tr>
+        <th scope="col">Classificador</th>
+        <th scope="col">Dataset</th>
+        <th scope="col">F1</th>
+        <th scope="col">FP</th>
+        <th scope="col">FN</th>
+        <th scope="col">AUC</th>
+        <th scope="col">Feature dominante</th>
+      </tr>
+      <tr><td><span class="pill pill-red">DoS</span></td><td style="font-size:.75rem;">Kim 2026</td><td><strong>0,9998</strong></td><td><span class="pill pill-green">0</span></td><td>13</td><td>≈1,0000</td><td><code>f15 payload_len (58,7%)</code></td></tr>
+      <tr><td><span class="pill pill-orange">Fuzzy</span></td><td style="font-size:.75rem;">Kim 2026</td><td><strong>0,9979</strong></td><td>330</td><td>74</td><td>0,9999</td><td><code>f08 payload_hamming (51,3%)</code></td></tr>
+      <tr><td><span class="pill pill-purple">MITM Multi</span></td><td style="font-size:.75rem;">Kim 2026</td><td><strong>0,9984</strong></td><td>167</td><td>349</td><td>1,0000</td><td><code>f21 is_relay (69,7%)</code></td></tr>
+      <tr><td><span class="pill pill-purple">MITM Single</span></td><td style="font-size:.75rem;">Kim 2026</td><td><strong>0,9994</strong></td><td>61</td><td>143</td><td>1,0000</td><td><code>f19 is_sd (92,9%)</code></td></tr>
+      <tr><td><span class="pill pill-blue">FakeClientID</span></td><td style="font-size:.75rem;">Alkhatib 2021</td><td><strong>0,9982</strong></td><td><span class="pill pill-green">0</span></td><td>1</td><td>0,9998</td><td><code>f20 svc_diversity (67,5%)</code></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SLIDE 13 — CONCLUSÕES E PRÓXIMOS PASSOS
+═══════════════════════════════════════════════════════ -->
+<div class="slide" id="s14">
+  <div class="slide-header">
+    <div class="title">Conclusões e Próximos Passos</div>
+    <div class="tag">Síntese</div>
+    <div class="slide-num">14 / 14</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols">
+      <div>
+        <h2>O que foi demonstrado</h2>
+        <ul class="pts" style="margin-bottom:.8rem;">
+          <li><strong>Atribuição de label por conteúdo SOME/IP</strong> (spec Kim 2026) é a abordagem correta: o IP de origem é insuficiente pois o nó atacante também gera tráfego legítimo, e ataques com IP forjado (MITM Multi) seriam invisíveis a qualquer critério baseado em endereço.</li>
+          <li><strong>Cada ataque tem assinatura própria</strong>: DoS = repetição; Fuzzy = aleatoriedade; MITM Multi = serviço relay; MITM Single = SD Withdraw.</li>
+          <li><strong>Features comportamentais</strong> (sem bytes brutos) são suficientes para F1 ≥ 0,997 em todos os 4 classificadores.</li>
+          <li><strong>IP-agnóstico</strong>: o modelo detecta o comportamento, não o endereço. Novos atacantes com outros IPs usando a mesma técnica serão detectados.</li>
+          <li><strong>Modelos binários individuais</strong> revelam qual feature discrimina cada ataque — informação valiosa para o classificador multiclasse.</li>
+        </ul>
+
+        <h3>Limitações</h3>
+        <ul class="pts">
+          <li>Split treino/teste na <strong>mesma simulação</strong> — não é cenário completamente inédito</li>
+          <li>Ataques de <strong>baixa taxa</strong> (fuzzy lento, DoS distribuído) podem não ser detectados</li>
+          <li>FakeClientID é mais furtivo — precisa da feature <code>f22_src_clientid_diversity</code></li>
+          <li>Dataset de uma única implementação de rede (9 ECUs fixas)</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Próximos passos</h2>
+        <div class="callout callout-blue" style="margin-bottom:.6rem;">
+          <strong>1 · Re-treino multiclasse</strong> com labels por conteúdo — atualizar 01_features.py do multiclasse para usar o mesmo pipeline de atribuição de label dos classificadores binários.
+        </div>
+        <div class="callout callout-blue" style="margin-bottom:.6rem;">
+          <strong>2 · Validação out-of-scope</strong> — testar os modelos nos PCAPs Alkhatib (eerror, eevent, drequest, wrongInterface) que representam anomalias não vistas no treino.
+        </div>
+        <div class="callout callout-orange" style="margin-bottom:.6rem;">
+          <strong>3 · Cross-dataset</strong> — treinar em Kim e testar em Alkhatib (e vice-versa) para avaliar generalização entre simulações distintas.
+        </div>
+        <div class="callout callout-orange">
+          <strong>4 · Deployment</strong> — implementar o IDS em tempo real (simulation/ids/ids_live.py) com Scapy em modo sniff + XGBoost inline para validação em ambiente Docker.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #deck -->
+
+<!-- ── Navigation bar ── -->
+<div id="nav">
+  <button id="btn-prev" onclick="go(-1)" disabled>← Anterior</button>
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+  <div id="slide-counter">1 / 14</div>
+  <button id="btn-next" onclick="go(1)">Próximo →</button>
+</div>
+
+<script>
+  const total = 14;
+  let cur = 1;
+
+  function go(d) {
+    const next = cur + d;
+    if (next < 1 || next > total) return;
+    document.getElementById('s' + cur).classList.remove('active');
+    cur = next;
+    document.getElementById('s' + cur).classList.add('active');
+    document.getElementById('slide-counter').textContent = cur + ' / ' + total;
+    document.getElementById('progress-bar').style.width = ((cur / total) * 100) + '%';
+    document.getElementById('btn-prev').disabled = cur === 1;
+    document.getElementById('btn-next').disabled = cur === total;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+
+  // Init progress bar
+  document.getElementById('progress-bar').style.width = ((1 / total) * 100) + '%';
+</script>
+</body>
+</html>
