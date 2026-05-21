@@ -13,7 +13,7 @@ Uso:
     python src/00_download.py
     python src/00_download.py --check   # só verifica se os arquivos existem
 """
-import sys, shutil, subprocess, argparse
+import sys, os, shutil, subprocess, argparse
 from pathlib import Path
 import requests
 from tqdm import tqdm
@@ -102,7 +102,11 @@ def clone_alkhatib_pcaps(dest_dir: Path) -> None:
         else:
             print(f"  [AVISO] {fname} não encontrado no repo clonado")
 
-    shutil.rmtree(tmp)
+    import stat
+    def _rm_readonly(func, path, _):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    shutil.rmtree(tmp, onerror=_rm_readonly)
     print(f"PCAPs Alkhatib copiados para {dest_dir}")
 
 
